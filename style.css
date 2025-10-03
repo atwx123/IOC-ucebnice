@@ -1,9 +1,54 @@
 .pojem {
     font-style: italic;
+    color: #111827;
 }
 .termi {
     font-weight: bold;
+    color: #FBBF24;
 }
 .zvyr {
     font-weight: bolder;
+    color: #111827;
+}
+
+hr {
+    margin-left: 50px;
+    margin-right: 50px;
+    /*
+    height: 10px;
+    display: block;
+    color: #F9E675;
+    border-radius: 10px;
+    margin-top: 0;
+    
+    */
+}
+h1, h3 {
+    color: #111827;
+    margin: 20px;
+}
+h2 {
+    color: #111827;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-left: 20px;
+}
+body {
+    margin: 0;
+    background-color: #E5E7EB;
+    color: #374151;
+}
+h1 {
+    padding-top: 10px;
+    margin-top: 200px;
+    text-align: center;
+}
+p{
+    padding-left: 40px;
+}
+.atmosfericka_refrakce {
+    max-width: 100%;
+    height: auto;
+    object-fit: fill;
+    display: block;
 }
