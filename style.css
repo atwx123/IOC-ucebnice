@@ -51,5 +51,31 @@ p{
 .atmosfericka_refrakce {
     float : right;
     margin: 0 10px 10px 0;
+    height: 250px;
+    width: auto;
 
+}
+.fermantuv_princip {
+    float : right;
+    margin: 0 10px 10px 0;
+    height: 100px;
+    width: auto;
+}
+.index_lomu {
+    height: 140px;
+    width: auto;
+    float : right;
+    margin: 0 10px 10px 0; 
+}
+.lom_ke_kolmici {
+    float : right;
+    margin: 0 10px 10px 0;
+    height: 205px;
+    width: auto;
+}
+.lom_na_planparaelni_desce{
+    float : right;
+    margin: 0 10px 10px 0;
+    height: 150px;
+    width: auto;
 }
