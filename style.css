@@ -51,18 +51,18 @@ p{
 .atmosfericka_refrakce {
     float : right;
     margin: 0 10px 10px 0;
-    height: 250px;
+    height: 370px;
     width: auto;
 
 }
 .fermantuv_princip {
     float : right;
     margin: 0 10px 10px 0;
-    height: 100px;
+    height: 120px;
     width: auto;
 }
 .index_lomu {
-    height: 140px;
+    height: 220px;
     width: auto;
     float : right;
     margin: 0 10px 10px 0; 
@@ -70,12 +70,27 @@ p{
 .lom_ke_kolmici {
     float : right;
     margin: 0 10px 10px 0;
-    height: 205px;
+    height: 370px;
     width: auto;
 }
 .lom_na_planparaelni_desce{
     float : right;
     margin: 0 10px 10px 0;
-    height: 150px;
+    height: 250px;
     width: auto;
+}
+canvas {
+    border: 1px solid #000000;
+}
+.canvas-container {
+    text-align: center;
+}
+.uhel {
+    width: 40px;
+    text-align: center;
+    line-height: 40px;
+    background-color: #F3F4F6;
+    border: 1px solid #D1D5DB;
+    border-radius: 0.375rem 0 0 0.375rem;
+    font-weight: 500;
 }
