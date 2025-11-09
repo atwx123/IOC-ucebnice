@@ -1,20 +1,20 @@
 .pojem {
-    font-style: italic;
-    color: #111827;
+  font-style: italic;
+  color: #111827;
 }
 .termi {
-    font-weight: bold;
-    color: #FBBF24;
+  font-weight: bold;
+  color: #fbbf24;
 }
 .zvyr {
-    font-weight: bolder;
-    color: #111827;
+  font-weight: bolder;
+  color: #111827;
 }
 
 hr {
-    margin-left: 50px;
-    margin-right: 50px;
-    /*
+  margin-left: 50px;
+  margin-right: 50px;
+  /*
     height: 10px;
     display: block;
     color: #F9E675;
@@ -23,74 +23,74 @@ hr {
     
     */
 }
-h1, h3 {
-    color: #111827;
-    margin: 20px;
+h1,
+h3 {
+  color: #111827;
+  margin: 20px;
 }
 h2 {
-    color: #111827;
-    margin-left: 20px;
-    margin-right: 20px;
-    padding-left: 20px;
+  color: #111827;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-left: 20px;
 }
 body {
-    margin: 0;
-    background-color: #E5E7EB;
-    color: #374151;
+  margin: 0;
+  background-color: #e5e7eb;
+  color: #374151;
 }
 h1 {
-    padding-top: 10px;
-    margin-top: 200px;
-    text-align: center;
+  padding-top: 10px;
+  margin-top: 200px;
+  text-align: center;
 }
-p{
-    padding: 2px 0;
-    margin: 0 5%;
-    padding-left: 40px;
+p {
+  padding: 2px 0;
+  margin: 0 5%;
+  padding-left: 40px;
 }
 .atmosfericka_refrakce {
-    float : right;
-    margin: 0 10px 10px 0;
-    height: 370px;
-    width: auto;
-
+  float: right;
+  margin: 0 10px 10px 0;
+  height: 370px;
+  width: auto;
 }
 .fermantuv_princip {
-    float : right;
-    margin: 0 10px 10px 0;
-    height: 120px;
-    width: auto;
+  float: right;
+  margin: 0 10px 10px 0;
+  height: 120px;
+  width: auto;
 }
 .index_lomu {
-    height: 220px;
-    width: auto;
-    float : right;
-    margin: 0 10px 10px 0; 
+  height: 220px;
+  width: auto;
+  float: right;
+  margin: 0 10px 10px 0;
 }
 .lom_ke_kolmici {
-    float : right;
-    margin: 0 10px 10px 0;
-    height: 370px;
-    width: auto;
+  float: right;
+  margin: 0 10px 10px 0;
+  height: 370px;
+  width: auto;
 }
-.lom_na_planparaelni_desce{
-    float : right;
-    margin: 0 10px 10px 0;
-    height: 250px;
-    width: auto;
+.lom_na_planparaelni_desce {
+  float: right;
+  margin: 0 10px 10px 0;
+  height: 250px;
+  width: auto;
 }
 canvas {
-    border: 1px solid #000000;
+  border: 1px solid #000000;
 }
 .canvas-container {
-    text-align: center;
+  text-align: center;
 }
 .uhel {
-    width: 40px;
-    text-align: center;
-    line-height: 40px;
-    background-color: #F3F4F6;
-    border: 1px solid #D1D5DB;
-    border-radius: 0.375rem 0 0 0.375rem;
-    font-weight: 500;
+  width: 40px;
+  text-align: center;
+  line-height: 40px;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem 0 0 0.375rem;
+  font-weight: 500;
 }
