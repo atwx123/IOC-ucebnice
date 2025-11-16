@@ -1,7 +1,6 @@
-
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D;
-let errorAngleInputDiv: HTMLDivElement;
+//let errorAngleInputDiv: HTMLDivElement;
 
 let width: number = 1000;
 let height: number = 600;
@@ -9,17 +8,17 @@ let height: number = 600;
 canvas = document.getElementById("lomSvetlaInt") as HTMLCanvasElement;
 ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-errorAngleInputDiv = document.getElementById("errorOutput") as HTMLDivElement;
+//errorAngleInputDiv = document.getElementById("errorOutput") as HTMLDivElement;
 let angleTextInput: HTMLInputElement = document.getElementById(
   "angleText"
 ) as HTMLInputElement;
 let angleSendButton: HTMLButtonElement = document.getElementById(
   "angleSend"
 ) as HTMLButtonElement;
-errorAngleInputDiv.style.visibility = "hidden";
+//errorAngleInputDiv.style.visibility = "hidden";
 
 let angleValue: number = NaN;
-
+/*
 function readingAngleValue(angleTextInput: HTMLInputElement) {
   errorAngleInputDiv.style.visibility = "hidden";
   angleValue = parseFloat(angleTextInput.value);
@@ -34,13 +33,14 @@ function readingAngleValue(angleTextInput: HTMLInputElement) {
     return;
   }
 }
+  */
 angleSendButton.addEventListener("click", () => {
-  readingAngleValue(angleTextInput);
+  //readingAngleValue(angleTextInput);
 });
 
 angleTextInput.addEventListener("keydown", (event) => {
   if (event.key == "Enter") {
-    readingAngleValue(angleTextInput);
+    //readingAngleValue(angleTextInput);
   }
 });
 canvas.width = width;
@@ -50,7 +50,7 @@ draw(900);
 
 console.log(canvas.getContext("2d"));
 
-function draw(xAxis: number) {
+function draw(xAxisAngle: number) {
   ctx.fillStyle = "lightblue";
   ctx.fillRect(0, 0, width, height / 2);
   ctx.fillStyle = "lightgreen";
@@ -63,6 +63,6 @@ function draw(xAxis: number) {
   ctx.strokeStyle = "blue";
   ctx.beginPath();
   ctx.moveTo(500, height / 2);
-  ctx.lineTo(xAxis, height);
+  ctx.lineTo(xAxisAngle, height);
   ctx.stroke();
 }

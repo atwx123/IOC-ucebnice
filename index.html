@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    
+
     <h1> LOM SVĚTLA</h1>
     <p>
         <span class="pojem">Odraz</span> (reflexe) a <span class="pojem">lom</span> (refrakce) světla jsou <span
@@ -189,7 +189,7 @@
         <input type="text" class="form-control d-none" placeholder="Hidden input" aria-label="Hidden input"
             aria-describedby="visible-addon">
     </div>
-    -->
+    
     <div class="input-group w-25 mb-3 mx-auto">
         <input type="text" class="form-control" id="angleText" placeholder="Úhel" aria-label="Úhel" aria-describedby="button-addon2">
         <button class="btn btn-outline-secondary" id="angleSend" type="button" id="button-addon2">Odeslat</button>
@@ -199,6 +199,10 @@
             Zadejte prosim cislo od 0 do 90, vaše číslo je 
         </p>
     </div>
+    -->
+    <label for="range4" class="form-label" id="indexLomuRange">Index lomu</label>
+    <input type="range" class="form-range" min="1" max="2.5" value="1" id="range4">
+    <output for="range4" id="indexLomuRangeValue" aria-hidden="true"></output>
     <div class="canvas-container">
         <canvas id="lomSvetlaInt" width="10px" height="600px"></canvas>
     </div>
