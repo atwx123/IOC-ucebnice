@@ -2,33 +2,39 @@
 
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D;
+let errorAngleInputDiv: HTMLDivElement;
 
 let width: number = 1000;
 let height: number = 600;
 
 canvas = document.getElementById("lomSvetlaInt") as HTMLCanvasElement;
 ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+
+errorAngleInputDiv = document.getElementById("errorOutput") as HTMLDivElement;
 let angleTextInput: HTMLInputElement = document.getElementById(
   "angleText"
 ) as HTMLInputElement;
 let angleSendButton: HTMLButtonElement = document.getElementById(
   "angleSend"
 ) as HTMLButtonElement;
+errorAngleInputDiv.style.visibility = "hidden";
 
-let angleValue: number, NaN;
-angleValue = -1;
+let angleValue: number = NaN;
 
 function readingAngleValue(angleTextInput: HTMLInputElement) {
+  errorAngleInputDiv.style.visibility = "hidden";
   angleValue = parseFloat(angleTextInput.value);
-  if (!(angleValue != NaN && angleValue <= 90 && angleValue >= 0)) {
-    alert(`Zadejte prosim cislo od 0 do 90, Vaše hodnota je ${angleValue}`);
+  if (isNaN(angleValue) || angleValue > 90 || angleValue < 0) {
+    errorAngleInputDiv.style.visibility = "visible";
+    errorAngleInputDiv.textContent =
+      "Zadejte prosim cislo od 0 do 90, vaše číslo je " + angleTextInput.value;
+    angleTextInput.value = "";
   } else {
     angleTextInput.value = "";
     draw((angleValue * (canvas.width / 2)) / 90 + canvas.width / 2);
     return;
   }
 }
-
 angleSendButton.addEventListener("click", () => {
   readingAngleValue(angleTextInput);
 });
