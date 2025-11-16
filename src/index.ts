@@ -1,4 +1,3 @@
-// import './style.css';
 
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D;
