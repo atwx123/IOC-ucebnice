@@ -1,13 +1,14 @@
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D;
 //let errorAngleInputDiv: HTMLDivElement;
+let indexLomuInput : HTMLInputElement;
 
 let width: number = 1000;
 let height: number = 600;
 
 canvas = document.getElementById("lomSvetlaInt") as HTMLCanvasElement;
 ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-
+/*
 //errorAngleInputDiv = document.getElementById("errorOutput") as HTMLDivElement;
 let angleTextInput: HTMLInputElement = document.getElementById(
   "angleText"
@@ -18,7 +19,7 @@ let angleSendButton: HTMLButtonElement = document.getElementById(
 //errorAngleInputDiv.style.visibility = "hidden";
 
 let angleValue: number = NaN;
-/*
+
 function readingAngleValue(angleTextInput: HTMLInputElement) {
   errorAngleInputDiv.style.visibility = "hidden";
   angleValue = parseFloat(angleTextInput.value);
@@ -33,7 +34,7 @@ function readingAngleValue(angleTextInput: HTMLInputElement) {
     return;
   }
 }
-  */
+  
 angleSendButton.addEventListener("click", () => {
   //readingAngleValue(angleTextInput);
 });
@@ -43,6 +44,7 @@ angleTextInput.addEventListener("keydown", (event) => {
     //readingAngleValue(angleTextInput);
   }
 });
+*/
 canvas.width = width;
 canvas.height = height;
 
