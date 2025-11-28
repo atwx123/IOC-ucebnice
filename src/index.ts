@@ -1,13 +1,30 @@
 let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D;
-//let errorAngleInputDiv: HTMLDivElement;
-let indexLomuInput : HTMLInputElement;
+let indexLomuInput: HTMLInputElement;
+let indexLomuOutput: HTMLOutputElement;
 
 let width: number = 1000;
 let height: number = 600;
 
 canvas = document.getElementById("lomSvetlaInt") as HTMLCanvasElement;
 ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+indexLomuInput = document.getElementById("indexLomuInput") as HTMLInputElement;
+indexLomuOutput = document.getElementById(
+  "indexLomuRangeValue"
+) as HTMLOutputElement;
+
+indexLomuOutput.value = indexLomuInput.value;
+
+indexLomuInput.addEventListener("input", () => {
+  indexLomuOutput.value = indexLomuInput.value + "% (z intervalu 1 - 4,01)";
+  console.log(indexLomuInput.value);
+  indexLomu(indexLomuInput.valueAsNumber);
+});
+
+function indexLomu (value : number) {
+  let xAxis : number = (canvas.width/2 * value) + canvas.width/2;
+  draw(xAxis);
+}
 /*
 //errorAngleInputDiv = document.getElementById("errorOutput") as HTMLDivElement;
 let angleTextInput: HTMLInputElement = document.getElementById(
