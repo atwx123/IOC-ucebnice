@@ -16,14 +16,16 @@ indexLomuOutput = document.getElementById(
 indexLomuOutput.value = indexLomuInput.value;
 
 indexLomuInput.addEventListener("input", () => {
-  indexLomuOutput.value = indexLomuInput.value + "% (z intervalu 1 - 4,01)";
+  indexLomuOutput.value = indexLomuInput.value + "% n1 (z intervalu 1 - 4,01)";
   console.log(indexLomuInput.value);
   indexLomu(indexLomuInput.valueAsNumber);
 });
 
 function indexLomu (value : number) {
-  let xAxis : number = (canvas.width/2 * value) + canvas.width/2;
-  draw(xAxis);
+  let n1 : number = value;
+  let xn1 : number = canvas.width/2 * (value * 0.01);
+  let yn1 : number = height/2;
+  
 }
 /*
 //errorAngleInputDiv = document.getElementById("errorOutput") as HTMLDivElement;
@@ -65,23 +67,23 @@ angleTextInput.addEventListener("keydown", (event) => {
 canvas.width = width;
 canvas.height = height;
 
-draw(900);
+draw(300, 900);
 
 console.log(canvas.getContext("2d"));
 
-function draw(xAxisAngle: number) {
+function draw(n1 : number, n2: number) {
   ctx.fillStyle = "lightblue";
   ctx.fillRect(0, 0, width, height / 2);
   ctx.fillStyle = "lightgreen";
   ctx.fillRect(0, height / 2, width, height / 2);
   ctx.strokeStyle = "red";
   ctx.beginPath();
-  ctx.moveTo(300, 0);
+  ctx.moveTo(n1, 0);
   ctx.lineTo(500, height / 2);
   ctx.stroke();
   ctx.strokeStyle = "blue";
   ctx.beginPath();
   ctx.moveTo(500, height / 2);
-  ctx.lineTo(xAxisAngle, height);
+  ctx.lineTo(n2, height);
   ctx.stroke();
 }
