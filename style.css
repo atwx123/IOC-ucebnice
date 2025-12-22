@@ -101,3 +101,11 @@ canvas {
 .vSireniSvetla {
   margin-left: 130px;
 }
+.n1, .n2 {
+  margin: auto;
+  max-width: 85%;
+}
+.n1-text, .n2-text {
+  margin: auto;
+  text-align: left;
+}
