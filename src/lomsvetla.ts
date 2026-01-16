@@ -79,7 +79,8 @@ function beta(): [number, number] | undefined {
   }
   let rad = Math.asin(sin * pomer);
   let angle = radToAng(rad);
-  betaOutput.value = "Beta je " + angle + "°";
+  let beta = Math.round(angle * 100) / 100;
+  betaOutput.value = "Beta je " + beta + "°";
   let nx = canvas.width / 2 + (canvas.height / 2) * Math.tan(rad);
   if (nx <= canvas.width) {
     return [nx, canvas.height];
@@ -136,7 +137,7 @@ function draw(axisx: [number, number], axisy: [number, number] | undefined) {
   if (axisy == undefined) {
     let x1 = axisx[0];
     let x2 = axisx[1];
-    axiy[0] =  canvas.width + (canvas.width - x1);
+    axiy[0] = canvas.width + (canvas.width - x1);
     axiy[1] = x2;
   } else {
     axiy = axisy;
