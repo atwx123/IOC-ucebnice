@@ -1,12 +1,31 @@
-let canvas: HTMLCanvasElement = document.getElementById(
+const canvas: HTMLCanvasElement = document.getElementById(
   "zrcadlaInt",
 ) as HTMLCanvasElement;
 const width: number = 1000;
 const height: number = 600;
+const center = width / 2;
 const rz: number = 400;
 const ohnisko = width / 2 + rz / 2;
 const pOhnisko = rz / 2;
 
+function verBeam(y: number, xk?: number, color?: string) {
+  ctx.save();
+  if (color != undefined) {
+    ctx.strokeStyle = color;
+  }
+  ctx.beginPath();
+  ctx.moveTo(0 - center, y);
+  if (xk != undefined) {
+    ctx.lineTo(xk, y);
+    ctx.stroke();
+    ctx.setLineDash([5, 5, 10, 5]);
+    ctx.beginPath();
+    ctx.moveTo(xk, y);
+  }
+  ctx.lineTo(width, y);
+  ctx.stroke();
+  ctx.restore();
+}
 canvas.width = width;
 canvas.height = height;
 
@@ -21,7 +40,7 @@ ctx.lineTo(width, height / 2);
 ctx.stroke();
 ctx.setLineDash([]);
 
-ctx.transform(1, 0, 0, 1, width / 2, 0);
+ctx.transform(1, 0, 0, 1, center, 0);
 
 ctx.beginPath();
 ctx.arc(0, height / 2, rz, Math.PI / 2, (Math.PI * 2) / 1.5, true);

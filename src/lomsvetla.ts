@@ -1,21 +1,53 @@
-let canvas: HTMLCanvasElement;
-let ctx: CanvasRenderingContext2D;
-let alphaInput: HTMLInputElement;
-let alphaOutput: HTMLOutputElement;
-let indexn1: HTMLSelectElement;
-let indexn2: HTMLSelectElement;
-let betaOutput: HTMLOutputElement;
+const canvas: HTMLCanvasElement = document.getElementById(
+  "lomSvetlaInt",
+) as HTMLCanvasElement;
+const ctx: CanvasRenderingContext2D = canvas.getContext(
+  "2d",
+) as CanvasRenderingContext2D;
+const alphaInput: HTMLInputElement = document.getElementById(
+  "alphaInput",
+) as HTMLInputElement;
+const alphaOutput: HTMLOutputElement = document.getElementById(
+  "alphaRangeValue",
+) as HTMLOutputElement;
+const indexn1: HTMLSelectElement = document.getElementById(
+  "indexn1",
+) as HTMLSelectElement;
+const indexn2: HTMLSelectElement = document.getElementById(
+  "indexn2",
+) as HTMLSelectElement;
+const betaOutput: HTMLOutputElement = document.getElementById(
+  "betaValue",
+) as HTMLOutputElement;
 
-let width: number = 1000;
-let height: number = 600;
+const width: number = 1000;
+const height: number = 600;
 
-canvas = document.getElementById("lomSvetlaInt") as HTMLCanvasElement;
-ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-alphaInput = document.getElementById("alphaInput") as HTMLInputElement;
-alphaOutput = document.getElementById("alphaRangeValue") as HTMLOutputElement;
-indexn1 = document.getElementById("indexn1") as HTMLSelectElement;
-indexn2 = document.getElementById("indexn2") as HTMLSelectElement;
-betaOutput = document.getElementById("betaValue") as HTMLOutputElement;
+function draw(axisx: [number, number], axisy: [number, number] | undefined) {
+  let axiy: [number, number] = [-1, -1];
+  if (axisy == undefined) {
+    let x1 = axisx[0];
+    let x2 = axisx[1];
+    axiy[0] = canvas.width + (canvas.width - x1);
+    axiy[1] = x2;
+  } else {
+    axiy = axisy;
+  }
+  ctx.fillStyle = "lightblue";
+  ctx.fillRect(0, 0, width, height / 2);
+  ctx.fillStyle = "lightgreen";
+  ctx.fillRect(0, height / 2, width, height / 2);
+  ctx.strokeStyle = "red";
+  ctx.beginPath();
+  ctx.moveTo(axisx[0], axisx[1]);
+  ctx.lineTo(width / 2, height / 2);
+  ctx.stroke();
+  ctx.strokeStyle = "blue";
+  ctx.beginPath();
+  ctx.moveTo(width / 2, height / 2);
+  ctx.lineTo(axiy[0], axiy[1]);
+  ctx.stroke();
+}
 
 function angToRad(ang: number) {
   return (ang / 360) * (2 * Math.PI);
@@ -25,10 +57,6 @@ function radToAng(rad: number) {
   return (rad / (2 * Math.PI)) * 360;
 }
 
-alphaInput.addEventListener("input", () => {
-  alphaOutput.value = alphaInput.value + "°";
-  draw(alpha(alphaInput.valueAsNumber), beta());
-});
 function indexLomu(value: number, alpha: number, beta: number, n2: number) {
   let n1: number = value;
   let xn1: number =
@@ -88,35 +116,15 @@ function beta(): [number, number] | undefined {
   let ny = canvas.height / 2 + (canvas.width / 2) * Math.tan(Math.PI / 2 - rad);
   return [canvas.width, ny];
 }
+
+alphaInput.addEventListener("input", () => {
+  alphaOutput.value = alphaInput.value + "°";
+  draw(alpha(alphaInput.valueAsNumber), beta());
+});
+
 canvas.width = width;
 canvas.height = height;
 
 draw([300, 0], [canvas.height, 900]);
 
 console.log(canvas.getContext("2d"));
-
-function draw(axisx: [number, number], axisy: [number, number] | undefined) {
-  let axiy: [number, number] = [-1, -1];
-  if (axisy == undefined) {
-    let x1 = axisx[0];
-    let x2 = axisx[1];
-    axiy[0] = canvas.width + (canvas.width - x1);
-    axiy[1] = x2;
-  } else {
-    axiy = axisy;
-  }
-  ctx.fillStyle = "lightblue";
-  ctx.fillRect(0, 0, width, height / 2);
-  ctx.fillStyle = "lightgreen";
-  ctx.fillRect(0, height / 2, width, height / 2);
-  ctx.strokeStyle = "red";
-  ctx.beginPath();
-  ctx.moveTo(axisx[0], axisx[1]);
-  ctx.lineTo(width / 2, height / 2);
-  ctx.stroke();
-  ctx.strokeStyle = "blue";
-  ctx.beginPath();
-  ctx.moveTo(width / 2, height / 2);
-  ctx.lineTo(axiy[0], axiy[1]);
-  ctx.stroke();
-}
