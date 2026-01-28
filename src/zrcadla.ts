@@ -55,7 +55,7 @@ function interEdgeBot(): [number, number] {
 }
 
 function interEdgeTop(): number {
-  return pOhnisko / (ohnisko * iconHeight);
+  return (Math.abs(iconX) + Math.abs(pOhnisko)) / (ohnisko * iconHeight);
 }
 
 function drawIcon() {}
