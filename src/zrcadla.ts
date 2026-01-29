@@ -16,6 +16,9 @@ const pOhnisko: number = rz / 2;
 const iconHeight: number = 200;
 let iconX: number = -200;
 
+
+let obraz = new Image();
+
 function horBeam(y: number, xk?: number, color?: string) {
   ctx.save();
   if (color != undefined) {
@@ -122,3 +125,13 @@ horBeam(height / 2 - iconHeight, arcInterHor(), "red");
 iconInput.addEventListener("input", () => {
   iconX = -iconInput.valueAsNumber;
 });
+
+obraz.src = 'arrow.svg'; // zacne se nahravat obsah
+obraz.onload = () => {
+  // AZ se nahraje obsah.
+  let w = obraz.width;
+  let centerOfImage = -200; // nevim kde chces obraz
+  let newWidth = w / (obraz.height / iconHeight);
+  let leftSide = centerOfImage - newWidth / 2;
+  ctx.drawImage(obraz, leftSide, height / 2 - iconHeight, newWidth, iconHeight);
+};
