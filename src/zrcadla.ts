@@ -14,9 +14,8 @@ const rz: number = 400;
 const ohnisko: number = center + rz / 2;
 const pOhnisko: number = rz / 2;
 const iconHeight: number = 200;
+const drawIconHeight = height / 2 - iconHeight;
 let iconX: number = -200;
-
-
 let obraz = new Image();
 
 function horBeam(y: number, xk?: number, color?: string) {
@@ -26,112 +25,190 @@ function horBeam(y: number, xk?: number, color?: string) {
   }
   ctx.beginPath();
   ctx.moveTo(0 - center, y);
+  ctx.setLineDash([]);
   if (xk != undefined) {
     ctx.lineTo(xk, y);
     ctx.stroke();
-    ctx.setLineDash([5, 5, 10, 5]);
+    ctx.setLineDash([5, 5]);
     ctx.beginPath();
     ctx.moveTo(xk, y);
   }
   ctx.lineTo(width, y);
   ctx.stroke();
+  ctx.setLineDash([]);
   ctx.restore();
 }
 
-function arcInterHor(): number {
-  return Math.sqrt(Math.pow(rz, 2) - Math.pow(iconHeight, 2));
+function getRedHit(): [number, number] {
+  const y = drawIconHeight;
+  const dy = y - height / 2;
+  const x = Math.sqrt(Math.pow(rz, 2) - Math.pow(dy, 2));
+  return [x, y];
 }
 
-function arcInterCenter(): [number, number] {
-  let alpha: number = Math.asin(iconHeight / Math.abs(center));
-  return [rz * Math.cos(alpha), rz * Math.sin(alpha)];
+function getBlueStart(): [number, number] {
+  const objX = iconX;
+  const objY = drawIconHeight;
+  const focusX = pOhnisko;
+  const focusY = height / 2;
+  const slope = (focusY - objY) / (focusX - objX);
+  const estimatedY = focusY + slope * (rz - focusX);
+  const dy = estimatedY - height / 2;
+  const distSq = Math.pow(rz, 2) - Math.pow(dy, 2);
+  const x = distSq > 0 ? Math.sqrt(distSq) : rz;
+  return [x, estimatedY];
 }
 
 function linesInter(): number {
-  let y: number = arcInterCenter()[1];
+  let y: number = getBlueStart()[1];
   return y / Math.tan(Math.asin(iconHeight / rz));
 }
 
 function interEdgeBot(): [number, number] {
-  let y: number = Math.tan(Math.asin(iconHeight / rz) * -center);
-  return [-center, y];
+  const [hitX, hitY] = getRedHit();
+  const focusX = pOhnisko;
+  const focusY = height / 2;
+  const slope = (focusY - hitY) / (focusX - hitX);
+  const xTarget = -center;
+  const yTarget = focusY + slope * (xTarget - focusX);
+  return [xTarget, yTarget];
 }
 
-function interEdgeTop(): number {
-  return (Math.abs(iconX) + Math.abs(pOhnisko)) / (ohnisko * iconHeight);
+function getBlueHit(): [number, number] {
+  const objX = iconX;
+  const objY = drawIconHeight;
+  const focusX = pOhnisko;
+  const focusY = height / 2;
+  const slope = (focusY - objY) / (focusX - objX);
+  const xTarget = -center;
+  const yTarget = focusY + slope * (xTarget - focusX);
+  return [xTarget, yTarget];
 }
 
 function drawIcon() {}
 
+function drawBackground() {
+  ctx.save();
+  ctx.setLineDash([5, 10, 10, 15]);
+  ctx.beginPath();
+  ctx.moveTo(-center, height / 2);
+  ctx.lineTo(width - center, height / 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.transform(1, 0, 0, 1, center, 0);
+
+  ctx.beginPath();
+  ctx.arc(0, height / 2, rz, Math.PI / 2, (Math.PI * 2) / 1.5, true);
+  ctx.stroke();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(0, height / 2 - 5);
+  ctx.lineTo(0, height / 2 + 5);
+  ctx.stroke();
+  ctx.textAlign = "center";
+  ctx.textBaseline = "hanging";
+  ctx.font = "20px sans-serif";
+  ctx.fillText("S", 0, height / 2 + 10);
+
+  ctx.beginPath();
+  ctx.moveTo(pOhnisko, height / 2 - 5);
+  ctx.lineTo(pOhnisko, height / 2 + 5);
+  ctx.stroke();
+
+  ctx.fillText("F", pOhnisko, height / 2 + 10);
+  ctx.restore();
+}
+
 function draw() {
   ctx.save();
-  drawIcon();
-  let interhor: number = arcInterHor();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, width, height);
+  ctx.restore();
+
+  drawBackground();
+
+  if (obraz.complete) {
+    let w = obraz.width;
+    let newWidth = w / (obraz.height / iconHeight);
+    let leftSide = iconX - newWidth / 2;
+    ctx.drawImage(
+      obraz,
+      leftSide,
+      height / 2 - iconHeight,
+      newWidth,
+      iconHeight,
+    );
+  }
+
+  const rightEdge = 1000;
+  const leftEdge = -center;
 
   ctx.strokeStyle = "red";
-  horBeam(iconHeight, interhor);
+  const redHit = getRedHit();
+
+  horBeam(redHit[1], redHit[0], "red");
+
+  const focusX = pOhnisko;
+  const focusY = height / 2;
+  const slopeRed = (focusY - redHit[1]) / (focusX - redHit[0]);
+
+  const yAtLeft = redHit[1] + slopeRed * (leftEdge - redHit[0]);
+  const yAtRight = redHit[1] + slopeRed * (rightEdge - redHit[0]);
+
   ctx.beginPath();
-  ctx.moveTo(interhor, iconHeight);
-  let interedge: [number, number] = interEdgeBot();
-  ctx.lineTo(interedge[0], interedge[1]);
+  ctx.moveTo(redHit[0], redHit[1]);
+  ctx.lineTo(leftEdge, yAtLeft);
   ctx.stroke();
 
-  ctx.strokeStyle = "blue";
+  ctx.save();
   ctx.beginPath();
-  let intercen = arcInterCenter();
-  ctx.moveTo(interEdgeTop(), -center);
-  ctx.lineTo(intercen[0], intercen[1]);
+  ctx.setLineDash([5, 5]);
+  ctx.moveTo(redHit[0], redHit[1]);
+  ctx.lineTo(rightEdge, yAtRight);
   ctx.stroke();
-  horBeam(intercen[1], intercen[0]);
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  ctx.strokeStyle = "blue";
+  const blueHit = getBlueHit();
+
+  const objX = iconX;
+  const objY = drawIconHeight;
+  const slopeBlue = (focusY - objY) / (focusX - objX);
+
+  const blueYAtLeft = focusY + slopeBlue * (leftEdge - focusX);
+  const blueYAtRight = focusY + slopeBlue * (rightEdge - focusX);
+
+  ctx.setLineDash([]);
+  ctx.beginPath();
+  ctx.moveTo(leftEdge, blueYAtLeft);
+  ctx.lineTo(blueHit[0], blueHit[1]);
+  ctx.stroke();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.setLineDash([5, 5]);
+  ctx.moveTo(blueHit[0], blueHit[1]);
+  ctx.lineTo(rightEdge, blueYAtRight);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  horBeam(blueHit[1], blueHit[0], "blue");
 }
 canvas.width = width;
 canvas.height = height;
 
 iconInput.max = (center - 10).toString();
 
-ctx.setLineDash([5, 10, 10, 15]);
-ctx.beginPath();
-ctx.moveTo(0, height / 2);
-ctx.lineTo(width, height / 2);
-ctx.stroke();
-ctx.setLineDash([]);
-
-ctx.transform(1, 0, 0, 1, center, 0);
-
-ctx.beginPath();
-ctx.arc(0, height / 2, rz, Math.PI / 2, (Math.PI * 2) / 1.5, true);
-ctx.stroke();
-
-ctx.save();
-ctx.beginPath();
-ctx.moveTo(0, height / 2 - 5);
-ctx.lineTo(0, height / 2 + 5);
-ctx.stroke();
-ctx.textAlign = "center";
-ctx.textBaseline = "hanging";
-ctx.font = "20px sans-serif";
-ctx.fillText("S", 0, height / 2 + 10);
-
-ctx.beginPath();
-ctx.moveTo(pOhnisko, height / 2 - 5);
-ctx.lineTo(pOhnisko, height / 2 + 5);
-ctx.stroke();
-
-ctx.fillText("F", pOhnisko, height / 2 + 10);
-ctx.restore();
-
-horBeam(height / 2 - iconHeight, arcInterHor(), "red");
-
 iconInput.addEventListener("input", () => {
   iconX = -iconInput.valueAsNumber;
+  draw();
 });
 
-obraz.src = 'arrow.svg'; // zacne se nahravat obsah
+obraz.src = "arrow.svg";
 obraz.onload = () => {
-  // AZ se nahraje obsah.
-  let w = obraz.width;
-  let centerOfImage = -200; // nevim kde chces obraz
-  let newWidth = w / (obraz.height / iconHeight);
-  let leftSide = centerOfImage - newWidth / 2;
-  ctx.drawImage(obraz, leftSide, height / 2 - iconHeight, newWidth, iconHeight);
+  draw();
 };
