@@ -7,6 +7,9 @@ const ctx: CanvasRenderingContext2D = canvas.getContext(
 const iconInput: HTMLInputElement = document.getElementById(
   "iconRangeInput",
 ) as HTMLInputElement;
+const iconOutput: HTMLOutputElement = document.getElementById(
+  "iconRangeOutput",
+) as HTMLOutputElement;
 const width: number = 1000;
 const height: number = 600;
 const center = width / 2;
@@ -51,12 +54,40 @@ function getBlueStart(): [number, number] {
   const objY = drawIconHeight;
   const focusX = pOhnisko;
   const focusY = height / 2;
-  const slope = (focusY - objY) / (focusX - objX);
-  const estimatedY = focusY + slope * (rz - focusX);
-  const dy = estimatedY - height / 2;
-  const distSq = Math.pow(rz, 2) - Math.pow(dy, 2);
-  const x = distSq > 0 ? Math.sqrt(distSq) : rz;
-  return [x, estimatedY];
+
+  // Calculate coordinates relative to the center axis (y=0)
+  const relObjY = objY - height / 2;
+  const relFocusY = 0; // Focus is on the axis
+
+  // Handle edge case: Object directly above/below Focus (vertical line)
+  if (Math.abs(objX - focusX) < 0.01) {
+    const x = focusX;
+    // Circle equation: y = +/- sqrt(r^2 - x^2)
+    const val = Math.sqrt(rz * rz - x * x);
+    // If object is above axis (relObjY < 0), ray goes down, so hit is positive
+    const relHitY = relObjY < 0 ? val : -val;
+    return [x, relHitY + height / 2];
+  }
+
+  // 1. Calculate Slope (m)
+  const m = (relFocusY - relObjY) / (focusX - objX);
+
+  // 2. Quadratic Coefficients for intersection with circle
+  // (1 + m^2)x^2 - (2*focusX*m^2)x + (m^2*focusX^2 - rz^2) = 0
+  const A = 1 + m * m;
+  const B = -2 * focusX * m * m;
+  const C = m * m * focusX * focusX - rz * rz;
+
+  // 3. Solve for X
+  const delta = Math.sqrt(B * B - 4 * A * C);
+  // We want the intersection on the right side (positive X), which is the larger root
+  const x = (-B + delta) / (2 * A);
+
+  // 4. Solve for Y using line equation
+  const relHitY = m * (x - focusX);
+
+  // Return [x, absoluteY]
+  return [x, relHitY + height / 2];
 }
 
 function linesInter(): number {
@@ -91,8 +122,8 @@ function drawBackground() {
   ctx.save();
   ctx.setLineDash([5, 10, 10, 15]);
   ctx.beginPath();
-  ctx.moveTo(-center, height / 2);
-  ctx.lineTo(width - center, height / 2);
+  ctx.moveTo(0, height / 2);
+  ctx.lineTo(width, height / 2);
   ctx.stroke();
   ctx.setLineDash([]);
 
@@ -119,6 +150,7 @@ function drawBackground() {
 
   ctx.fillText("F", pOhnisko, height / 2 + 10);
   ctx.restore();
+  ctx.restore();
 }
 
 function draw() {
@@ -127,7 +159,10 @@ function draw() {
   ctx.clearRect(0, 0, width, height);
   ctx.restore();
 
+  ctx.save();
+
   drawBackground();
+  ctx.translate(center, 0);
 
   if (obraz.complete) {
     let w = obraz.width;
@@ -145,6 +180,7 @@ function draw() {
   const rightEdge = 1000;
   const leftEdge = -center;
 
+  // Red ray
   ctx.strokeStyle = "red";
   const redHit = getRedHit();
 
@@ -171,8 +207,10 @@ function draw() {
   ctx.setLineDash([]);
   ctx.restore();
 
+  // Blue Ray
   ctx.strokeStyle = "blue";
-  const blueHit = getBlueHit();
+
+  const blueMirrorHit = getBlueStart();
 
   const objX = iconX;
   const objY = drawIconHeight;
@@ -184,19 +222,20 @@ function draw() {
   ctx.setLineDash([]);
   ctx.beginPath();
   ctx.moveTo(leftEdge, blueYAtLeft);
-  ctx.lineTo(blueHit[0], blueHit[1]);
+  ctx.lineTo(blueMirrorHit[0], blueMirrorHit[1]);
   ctx.stroke();
 
   ctx.save();
   ctx.beginPath();
   ctx.setLineDash([5, 5]);
-  ctx.moveTo(blueHit[0], blueHit[1]);
+  ctx.moveTo(blueMirrorHit[0], blueMirrorHit[1]);
   ctx.lineTo(rightEdge, blueYAtRight);
   ctx.stroke();
   ctx.setLineDash([]);
   ctx.restore();
 
-  horBeam(blueHit[1], blueHit[0], "blue");
+  horBeam(blueMirrorHit[1], blueMirrorHit[0], "blue");
+  ctx.restore();
 }
 canvas.width = width;
 canvas.height = height;
@@ -205,6 +244,7 @@ iconInput.max = (center - 10).toString();
 
 iconInput.addEventListener("input", () => {
   iconX = -iconInput.valueAsNumber;
+  iconOutput.value = iconInput.value;
   draw();
 });
 
