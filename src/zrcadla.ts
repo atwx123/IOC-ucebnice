@@ -55,38 +55,27 @@ function getBlueStart(): [number, number] {
   const focusX = pOhnisko;
   const focusY = height / 2;
 
-  // Calculate coordinates relative to the center axis (y=0)
   const relObjY = objY - height / 2;
   const relFocusY = 0; // Focus is on the axis
 
-  // Handle edge case: Object directly above/below Focus (vertical line)
   if (Math.abs(objX - focusX) < 0.01) {
     const x = focusX;
-    // Circle equation: y = +/- sqrt(r^2 - x^2)
     const val = Math.sqrt(rz * rz - x * x);
-    // If object is above axis (relObjY < 0), ray goes down, so hit is positive
     const relHitY = relObjY < 0 ? val : -val;
     return [x, relHitY + height / 2];
   }
 
-  // 1. Calculate Slope (m)
   const m = (relFocusY - relObjY) / (focusX - objX);
 
-  // 2. Quadratic Coefficients for intersection with circle
-  // (1 + m^2)x^2 - (2*focusX*m^2)x + (m^2*focusX^2 - rz^2) = 0
   const A = 1 + m * m;
   const B = -2 * focusX * m * m;
   const C = m * m * focusX * focusX - rz * rz;
 
-  // 3. Solve for X
   const delta = Math.sqrt(B * B - 4 * A * C);
-  // We want the intersection on the right side (positive X), which is the larger root
   const x = (-B + delta) / (2 * A);
 
-  // 4. Solve for Y using line equation
   const relHitY = m * (x - focusX);
 
-  // Return [x, absoluteY]
   return [x, relHitY + height / 2];
 }
 
