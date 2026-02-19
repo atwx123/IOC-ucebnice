@@ -79,9 +79,17 @@ function getBlueStart(): [number, number] {
   return [x, relHitY + height / 2];
 }
 
-function linesInter(): number {
-  let y: number = getBlueStart()[1];
-  return y / Math.tan(Math.asin(iconHeight / rz));
+function linesInter(): [number, number] {
+  const [redHitX, redHitY] = getRedHit();
+  const [blueHitX, blueHitY] = getBlueStart();
+  const focusX = pOhnisko;
+  const focusY = height / 2;
+
+  const mRed = (focusY - redHitY) / (focusX - redHitX);
+  const targetY = blueHitY;
+  const targetX = focusX + (targetY - focusY) / mRed;
+
+  return [targetX, targetY];
 }
 
 function interEdgeBot(): [number, number] {
@@ -153,9 +161,9 @@ function draw() {
   drawBackground();
   ctx.translate(center, 0);
 
+  const w = obraz.width;
+  const newWidth = w / (obraz.height / iconHeight);
   if (obraz.complete) {
-    let w = obraz.width;
-    let newWidth = w / (obraz.height / iconHeight);
     let leftSide = iconX - newWidth / 2;
     ctx.drawImage(
       obraz,
@@ -224,6 +232,23 @@ function draw() {
   ctx.restore();
 
   horBeam(blueMirrorHit[1], blueMirrorHit[0], "blue");
+
+  // Obraz
+  const intersection = linesInter();
+  const linesInterX = intersection[0];
+  const linesInterY = intersection[1];
+
+  const reflectIconHeight = linesInterY - height / 2;
+  const reflectNewWidth =
+    (obraz.width / obraz.height) * Math.abs(reflectIconHeight);
+  ctx.drawImage(
+    obraz,
+    linesInterX - reflectNewWidth / 2,
+    height / 2,
+    reflectNewWidth,
+    reflectIconHeight,
+  );
+
   ctx.restore();
 }
 canvas.width = width;
