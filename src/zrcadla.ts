@@ -113,8 +113,6 @@ function getBlueHit(): [number, number] {
   return [xTarget, yTarget];
 }
 
-function drawIcon() {}
-
 function drawBackground() {
   ctx.save();
   ctx.setLineDash([5, 10, 10, 15]);
@@ -150,7 +148,7 @@ function drawBackground() {
   ctx.restore();
 }
 
-function draw() {
+function drawToF() {
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, width, height);
@@ -234,7 +232,24 @@ function draw() {
   horBeam(blueMirrorHit[1], blueMirrorHit[0], "blue");
 
   // Obraz
-  const reflection = obraz;
+  const reflection: HTMLImageElement = obraz;
+  reflection.src = obraz.src;
+  const drawRotatedImage = (
+    ctx: CanvasRenderingContext2D,
+    img: HTMLImageElement,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    degrees: number,
+  ): void => {
+    ctx.save();
+    ctx.translate(x + width / 2, y + height / 2);
+    const radians = (degrees * Math.PI) / 180;
+    ctx.rotate(radians);
+    ctx.drawImage(img, -width / 2, -height / 2, width, height);
+    ctx.restore();
+  };
   const intersection = linesInter();
   const linesInterX = intersection[0];
   const linesInterY = intersection[1];
@@ -242,28 +257,146 @@ function draw() {
   const reflectIconHeight = linesInterY - height / 2;
   const reflectNewWidth =
     (obraz.width / obraz.height) * Math.abs(reflectIconHeight);
-  ctx.drawImage(
-    obraz,
+  drawRotatedImage(
+    ctx,
+    reflection,
     linesInterX - reflectNewWidth / 2,
     height / 2,
     reflectNewWidth,
     reflectIconHeight,
+    180,
   );
-
   ctx.restore();
 }
-canvas.width = width;
-canvas.height = height;
+function drawBehindF() {
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, width, height);
+  ctx.restore();
 
-iconInput.max = (center - 10).toString();
+  ctx.save();
 
+  drawBackground();
+  ctx.translate(center, 0);
+
+  const w = obraz.width;
+  const newWidth = w / (obraz.height / iconHeight);
+  if (obraz.complete) {
+    let leftSide = iconX - newWidth / 2;
+    ctx.drawImage(
+      obraz,
+      leftSide,
+      height / 2 - iconHeight,
+      newWidth,
+      iconHeight,
+    );
+  }
+
+  const rightEdge = 1000;
+  const leftEdge = -center;
+
+  // Red ray
+  ctx.strokeStyle = "red";
+  const redHit = getRedHit();
+
+  horBeam(redHit[1], redHit[0], "red");
+
+  const focusX = pOhnisko;
+  const focusY = height / 2;
+  const slopeRed = (focusY - redHit[1]) / (focusX - redHit[0]);
+
+  const yAtLeft = redHit[1] + slopeRed * (leftEdge - redHit[0]);
+  const yAtRight = redHit[1] + slopeRed * (rightEdge - redHit[0]);
+
+  ctx.beginPath();
+  ctx.moveTo(redHit[0], redHit[1]);
+  ctx.lineTo(leftEdge, yAtLeft);
+  ctx.stroke();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.setLineDash([5, 5]);
+  ctx.moveTo(redHit[0], redHit[1]);
+  ctx.lineTo(rightEdge, yAtRight);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  // Blue Ray
+  ctx.strokeStyle = "blue";
+
+  const blueMirrorHit = getBlueStart();
+
+  const objX = iconX;
+  const objY = drawIconHeight;
+  const slopeBlue = (focusY - objY) / (focusX - objX);
+
+  const blueYAtLeft = focusY + slopeBlue * (leftEdge - focusX);
+  const blueYAtRight = focusY + slopeBlue * (rightEdge - focusX);
+
+  ctx.setLineDash([]);
+  ctx.beginPath();
+  ctx.moveTo(leftEdge, blueYAtLeft);
+  ctx.lineTo(blueMirrorHit[0], blueMirrorHit[1]);
+  ctx.stroke();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.setLineDash([5, 5]);
+  ctx.moveTo(blueMirrorHit[0], blueMirrorHit[1]);
+  ctx.lineTo(rightEdge, blueYAtRight);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  horBeam(blueMirrorHit[1], blueMirrorHit[0], "blue");
+
+  // Obraz
+  const reflection: HTMLImageElement = obraz;
+  reflection.src = obraz.src;
+  const drawRotatedImage = (
+    ctx: CanvasRenderingContext2D,
+    img: HTMLImageElement,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    degrees: number,
+  ): void => {
+    ctx.save();
+    ctx.translate(x + width / 2, y + height / 2);
+    const radians = (degrees * Math.PI) / 180;
+    ctx.rotate(radians);
+    ctx.drawImage(img, -width / 2, -height / 2, width, height);
+    ctx.restore();
+  };
+  const intersection = linesInter();
+  const linesInterX = intersection[0];
+  const linesInterY = intersection[1];
+
+  const reflectIconHeight = linesInterY - height / 2;
+  const reflectNewWidth =
+    (obraz.width / obraz.height) * Math.abs(reflectIconHeight);
+  drawRotatedImage(
+    ctx,
+    reflection,
+    linesInterX - reflectNewWidth / 2,
+    height / 2,
+    reflectNewWidth,
+    reflectIconHeight,
+    180,
+  );
+}
 iconInput.addEventListener("input", () => {
   iconX = -iconInput.valueAsNumber;
   iconOutput.value = iconInput.value;
-  draw();
+  if (iconX < ohnisko) {
+    drawToF();
+  } else {
+  }
 });
 
 obraz.src = "arrow.svg";
 obraz.onload = () => {
-  draw();
+  drawToF();
 };
