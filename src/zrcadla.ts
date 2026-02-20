@@ -12,11 +12,11 @@ const iconOutput: HTMLOutputElement = document.getElementById(
 ) as HTMLOutputElement;
 const width: number = 1000;
 const height: number = 600;
-const center = width / 2;
-const rz: number = 400;
+const center = width / 4;
+const rz: number = 600;
 const ohnisko: number = center + rz / 2;
 const pOhnisko: number = rz / 2;
-const iconHeight: number = 200;
+const iconHeight: number = 50;
 const drawIconHeight = height / 2 - iconHeight;
 let iconX: number = -200;
 let obraz = new Image();
@@ -234,6 +234,7 @@ function draw() {
   horBeam(blueMirrorHit[1], blueMirrorHit[0], "blue");
 
   // Obraz
+  const reflection = obraz;
   const intersection = linesInter();
   const linesInterX = intersection[0];
   const linesInterY = intersection[1];
