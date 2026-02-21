@@ -12,7 +12,7 @@ const iconOutput: HTMLOutputElement = document.getElementById(
 ) as HTMLOutputElement;
 const width: number = 1000;
 const height: number = 600;
-const center = width / 4;
+const center = width / 6;
 const rz: number = 600;
 const ohnisko: number = center + rz / 2;
 const pOhnisko: number = rz / 2;
@@ -73,20 +73,19 @@ function getThroughFTFHit(): [number, number] {
 }
 
 function getThroughFBFHit(): [number, number] {
-  const relObjY: number = drawIconHeight - height / 2;
+  const relObjY = drawIconHeight - height / 2;
 
-  const m: number = (0 - relObjY) / (pOhnisko - iconX);
+  const m = (0 - relObjY) / (pOhnisko - iconX);
+  const A = 1 + m * m;
+  const B = -2 * pOhnisko * m * m;
+  const C = m * m * pOhnisko * pOhnisko - rz * rz;
+  const delta = Math.sqrt(B * B - 4 * A * C);
+  const x = (-B + delta) / (2 * A);
+  const relHitY = m * (x - pOhnisko);
 
-  const A: number = 1 + m * m;
-  const B: number = -2 * pOhnisko * m * m;
-  const C: number = m * m * pOhnisko * pOhnisko - rz * rz;
-
-  const delta: number = Math.sqrt(B * B - 4 * A * C);
-  const x: number = (-B + delta) / (2 * A);
-
-  const y: number = x * (drawIconHeight / iconX);
-  return [x, y];
+  return [x, relHitY + height / 2];
 }
+
 function linesInter(): [number, number] {
   const [redHitX, redHitY] = getHorTFHit();
   const [blueHitX, blueHitY] = getThroughFTFHit();
@@ -110,15 +109,11 @@ function interEdgeBot(): [number, number] {
   return [xTarget, yTarget];
 }
 
-function getHorBFHit(): [number, number, number] {
-  const focusY = height / 2;
-  const m = (focusY - drawIconHeight) / (pOhnisko - iconX);
-  const A = 1 + Math.pow(m, 2);
-  const B = -2 * pOhnisko * Math.pow(m, 2);
-  const C = Math.pow(m * pOhnisko, 2) - Math.pow(rz, 2);
-  const delta = Math.sqrt(Math.pow(B, 2) - 4 * A * C);
-  const x = (-B + delta) / (2 * A);
-  return [x, m * (x - pOhnisko), m];
+function getHorBFHit(): [number, number] {
+  const y = drawIconHeight;
+  const dy = y - height / 2;
+  const x = Math.sqrt(rz * rz - dy * dy);
+  return [x, y];
 }
 function drawBackground() {
   ctx.save();
@@ -297,35 +292,66 @@ function drawBehindF() {
     );
   }
 
-  // Red ray
-
-  const focusY: number = height / 2;
-  const redHit: [number, number] = getThroughFBFHit();
-  horBeam(redHit[1], redHit[0], "red");
-
-  const mr = (focusY - redHit[1]) / (pOhnisko - redHit[0]);
-  const yr = redHit[1] + mr * -redHit[0];
-  ctx.save();
-  ctx.strokeStyle = "red";
-  ctx.beginPath();
-  ctx.moveTo(redHit[0], redHit[1]);
-  ctx.lineTo(0, yr);
-  ctx.stroke();
-  ctx.restore();
+  const rightEdge = width - center;
+  const leftEdge = -center;
 
   // Blue ray
-  const [xkb, ykb, mb] = getHorBFHit();
-  horBeam(ykb, xkb, "blue");
 
-  const yb = drawIconHeight + mb * -iconX;
+  const focusY: number = height / 2;
+  const redHit = getThroughFBFHit();
+
+  const slopeF = (focusY - drawIconHeight) / (pOhnisko - iconX);
+  const xAtBottom = pOhnisko + (height - focusY) / slopeF;
+
+  ctx.strokeStyle = "blue";
+  ctx.setLineDash([]);
+  ctx.beginPath();
+  ctx.moveTo(xAtBottom, height);
+  ctx.lineTo(redHit[0], redHit[1]);
+  ctx.stroke();
+
+  horBeam(redHit[1], redHit[0], "blue");
 
   ctx.save();
   ctx.strokeStyle = "blue";
+  ctx.setLineDash([5, 5]);
   ctx.beginPath();
-  ctx.moveTo(xkb, ykb);
-  ctx.lineTo(0, yb);
+  ctx.moveTo(redHit[0], redHit[1]);
+  ctx.lineTo(rightEdge, redHit[1]);
   ctx.stroke();
   ctx.restore();
+
+  // Red ray
+  const [xkb, ykb] = getHorBFHit();
+  horBeam(ykb, xkb, "red");
+  const mb = (focusY - ykb) / (pOhnisko - xkb);
+  const ybLeft = ykb + mb * (leftEdge - xkb);
+  const ybRight = ykb + mb * (rightEdge - xkb);
+  ctx.strokeStyle = "red";
+  ctx.beginPath();
+  ctx.moveTo(xkb, ykb);
+  ctx.lineTo(leftEdge, ybLeft);
+  ctx.stroke();
+
+  ctx.save();
+  ctx.strokeStyle = "red";
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.moveTo(xkb, ykb);
+  ctx.lineTo(rightEdge, ybRight);
+  ctx.stroke();
+  ctx.restore();
+
+  const virtualX = xkb + (redHit[1] - ykb) / mb;
+  const virtualY = redHit[1];
+  const vHeight = virtualY - height / 2;
+  const absHeight = Math.abs(vHeight);
+  const vWidth = (obraz.width / obraz.height) * absHeight;
+
+  if (obraz.complete) {
+    ctx.drawImage(obraz, virtualX - vWidth / 2, virtualY, vWidth, absHeight);
+  }
+
   ctx.restore();
 }
 canvas.width = width;
