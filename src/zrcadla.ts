@@ -42,46 +42,54 @@ function horBeam(y: number, xk?: number, color?: string) {
   ctx.restore();
 }
 
-function getRedHit(): [number, number] {
+function getHorTFHit(): [number, number] {
   const y: number = drawIconHeight;
   const dy: number = y - height / 2;
   const x: number = Math.sqrt(Math.pow(rz, 2) - Math.pow(dy, 2));
   return [x, y];
 }
 
-function getBlueStart(): [number, number] {
-  const objX: number = iconX;
-  const objY: number = drawIconHeight;
-  const focusX: number = pOhnisko;
-  const focusY: number = height / 2;
+function getThroughFTFHit(): [number, number] {
+  const relObjY: number = drawIconHeight - height / 2;
 
-  const relObjY: number = objY - height / 2;
-  const relFocusY: number = 0; // Focus is on the axis
-
-  if (Math.abs(objX - focusX) < 0.01) {
-    const x: number = focusX;
-    const val: number = Math.sqrt(rz * rz - x * x);
+  if (Math.abs(iconX - pOhnisko) < 0.01) {
+    const val: number = Math.sqrt(rz * rz - pOhnisko * pOhnisko);
     const relHitY: number = relObjY < 0 ? val : -val;
-    return [x, relHitY + height / 2];
+    return [pOhnisko, relHitY + height / 2];
   }
 
-  const m: number = (relFocusY - relObjY) / (focusX - objX);
+  const m: number = (0 - relObjY) / (pOhnisko - iconX);
 
   const A: number = 1 + m * m;
-  const B: number = -2 * focusX * m * m;
-  const C: number = m * m * focusX * focusX - rz * rz;
+  const B: number = -2 * pOhnisko * m * m;
+  const C: number = m * m * pOhnisko * pOhnisko - rz * rz;
 
   const delta: number = Math.sqrt(B * B - 4 * A * C);
   const x: number = (-B + delta) / (2 * A);
 
-  const relHitY: number = m * (x - focusX);
+  const relHitY: number = m * (x - pOhnisko);
 
   return [x, relHitY + height / 2];
 }
 
+function getThroughFBFHit(): [number, number] {
+  const relObjY: number = drawIconHeight - height / 2;
+
+  const m: number = (0 - relObjY) / (pOhnisko - iconX);
+
+  const A: number = 1 + m * m;
+  const B: number = -2 * pOhnisko * m * m;
+  const C: number = m * m * pOhnisko * pOhnisko - rz * rz;
+
+  const delta: number = Math.sqrt(B * B - 4 * A * C);
+  const x: number = (-B + delta) / (2 * A);
+
+  const y: number = x * (drawIconHeight / iconX);
+  return [x, y];
+}
 function linesInter(): [number, number] {
-  const [redHitX, redHitY] = getRedHit();
-  const [blueHitX, blueHitY] = getBlueStart();
+  const [redHitX, redHitY] = getHorTFHit();
+  const [blueHitX, blueHitY] = getThroughFTFHit();
   const focusX: number = pOhnisko;
   const focusY: number = height / 2;
 
@@ -93,7 +101,7 @@ function linesInter(): [number, number] {
 }
 
 function interEdgeBot(): [number, number] {
-  const [hitX, hitY] = getRedHit();
+  const [hitX, hitY] = getHorTFHit();
   const focusX: number = pOhnisko;
   const focusY: number = height / 2;
   const slope: number = (focusY - hitY) / (focusX - hitX);
@@ -102,17 +110,16 @@ function interEdgeBot(): [number, number] {
   return [xTarget, yTarget];
 }
 
-function getBlueHit(): [number, number] {
-  const objX: number = iconX;
-  const objY: number = drawIconHeight;
-  const focusX: number = pOhnisko;
-  const focusY: number = height / 2;
-  const slope: number = (focusY - objY) / (focusX - objX);
-  const xTarget: number = -center;
-  const yTarget: number = focusY + slope * (xTarget - focusX);
-  return [xTarget, yTarget];
+function getHorBFHit(): [number, number, number] {
+  const focusY = height / 2;
+  const m = (focusY - drawIconHeight) / (pOhnisko - iconX);
+  const A = 1 + Math.pow(m, 2);
+  const B = -2 * pOhnisko * Math.pow(m, 2);
+  const C = Math.pow(m * pOhnisko, 2) - Math.pow(rz, 2);
+  const delta = Math.sqrt(Math.pow(B, 2) - 4 * A * C);
+  const x = (-B + delta) / (2 * A);
+  return [x, m * (x - pOhnisko), m];
 }
-
 function drawBackground() {
   ctx.save();
   ctx.setLineDash([5, 10, 10, 15]);
@@ -177,13 +184,11 @@ function drawToF() {
 
   // Red ray
   ctx.strokeStyle = "red";
-  const redHit = getRedHit();
+  const redHit = getHorTFHit();
 
   horBeam(redHit[1], redHit[0], "red");
-
-  const focusX: number = pOhnisko;
   const focusY: number = height / 2;
-  const slopeRed: number = (focusY - redHit[1]) / (focusX - redHit[0]);
+  const slopeRed: number = (focusY - redHit[1]) / (pOhnisko - redHit[0]);
 
   const yAtLeft: number = redHit[1] + slopeRed * (leftEdge - redHit[0]);
   const yAtRight: number = redHit[1] + slopeRed * (rightEdge - redHit[0]);
@@ -205,14 +210,14 @@ function drawToF() {
   // Blue Ray
   ctx.strokeStyle = "blue";
 
-  const blueMirrorHit: [number, number] = getBlueStart();
+  const blueMirrorHit: [number, number] = getThroughFTFHit();
 
   const objX: number = iconX;
   const objY: number = drawIconHeight;
-  const slopeBlue: number = (focusY - objY) / (focusX - objX);
+  const slopeBlue: number = (focusY - objY) / (pOhnisko - objX);
 
-  const blueYAtLeft: number = focusY + slopeBlue * (leftEdge - focusX);
-  const blueYAtRight: number = focusY + slopeBlue * (rightEdge - focusX);
+  const blueYAtLeft: number = focusY + slopeBlue * (leftEdge - pOhnisko);
+  const blueYAtRight: number = focusY + slopeBlue * (rightEdge - pOhnisko);
 
   ctx.setLineDash([]);
   ctx.beginPath();
@@ -291,6 +296,37 @@ function drawBehindF() {
       iconHeight,
     );
   }
+
+  // Red ray
+
+  const focusY: number = height / 2;
+  const redHit: [number, number] = getThroughFBFHit();
+  horBeam(redHit[1], redHit[0], "red");
+
+  const mr = (focusY - redHit[1]) / (pOhnisko - redHit[0]);
+  const yr = redHit[1] + mr * -redHit[0];
+  ctx.save();
+  ctx.strokeStyle = "red";
+  ctx.beginPath();
+  ctx.moveTo(redHit[0], redHit[1]);
+  ctx.lineTo(0, yr);
+  ctx.stroke();
+  ctx.restore();
+
+  // Blue ray
+  const [xkb, ykb, mb] = getHorBFHit();
+  horBeam(ykb, xkb, "blue");
+
+  const yb = drawIconHeight + mb * -iconX;
+
+  ctx.save();
+  ctx.strokeStyle = "blue";
+  ctx.beginPath();
+  ctx.moveTo(xkb, ykb);
+  ctx.lineTo(0, yb);
+  ctx.stroke();
+  ctx.restore();
+  ctx.restore();
 }
 canvas.width = width;
 canvas.height = height;
@@ -300,13 +336,11 @@ iconInput.max = (center - 10).toString();
 iconInput.addEventListener("input", () => {
   iconX = -iconInput.valueAsNumber;
   iconOutput.value = iconInput.value;
-  if (iconX < ohnisko) {
+  if (iconX < pOhnisko) {
     drawToF();
   } else {
+    drawBehindF();
   }
 });
 
 obraz.src = "arrow.svg";
-obraz.onload = () => {
-  drawToF();
-};
