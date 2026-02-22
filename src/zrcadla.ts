@@ -4,19 +4,25 @@ const canvas: HTMLCanvasElement = document.getElementById(
 const ctx: CanvasRenderingContext2D = canvas.getContext(
   "2d",
 ) as CanvasRenderingContext2D;
-const iconInput: HTMLInputElement = document.getElementById(
-  "iconRangeInput",
+const iconXInput: HTMLInputElement = document.getElementById(
+  "iconXRangeInput",
 ) as HTMLInputElement;
-const iconOutput: HTMLOutputElement = document.getElementById(
-  "iconRangeOutput",
-) as HTMLOutputElement;
+const iconYInput: HTMLInputElement = document.getElementById(
+  "iconYRangeInput",
+) as HTMLInputElement;
+const radiusInput: HTMLInputElement = document.getElementById(
+  "radiusRangeInput",
+) as HTMLInputElement;
+const centerInput: HTMLInputElement = document.getElementById(
+  "centerRangeInput",
+) as HTMLInputElement;
 const width: number = 1000;
 const height: number = 600;
-const center = width / 6;
-const rz: number = 600;
+let center = width / 6;
+let rz: number = 600;
 const pOhnisko: number = rz / 2;
-const iconHeight: number = 50;
-const drawIconHeight = height / 2 - iconHeight;
+let iconHeight: number = 50;
+let drawIconHeight = height / 2 - iconHeight;
 let iconX: number = -200;
 const obraz: HTMLImageElement = new Image();
 
@@ -213,7 +219,7 @@ function drawToF() {
   // Obraz
   const reflection: HTMLImageElement = obraz;
   reflection.src = obraz.src;
-  const drawRotatedImage = (
+  const drawMirroredImage = (
     ctx: CanvasRenderingContext2D,
     img: HTMLImageElement,
     x: number,
@@ -223,10 +229,15 @@ function drawToF() {
     degrees: number,
   ): void => {
     ctx.save();
+
     ctx.translate(x + width / 2, y + height / 2);
+
     const radians: number = (degrees * Math.PI) / 180;
     ctx.rotate(radians);
+    ctx.scale(-1, 1);
+
     ctx.drawImage(img, -width / 2, -height / 2, width, height);
+
     ctx.restore();
   };
   const [linesInterX, linesInterY]: [number, number] = linesInter();
@@ -234,7 +245,7 @@ function drawToF() {
   const reflectIconHeight: number = linesInterY - height / 2;
   const reflectNewWidth: number =
     (obraz.width / obraz.height) * Math.abs(reflectIconHeight);
-  drawRotatedImage(
+  drawMirroredImage(
     ctx,
     reflection,
     linesInterX - reflectNewWidth / 2,
@@ -329,11 +340,10 @@ function drawBehindF() {
 canvas.width = width;
 canvas.height = height;
 
-iconInput.max = (center - 10).toString();
+iconXInput.max = (center - 10).toString();
 
-iconInput.addEventListener("input", () => {
-  iconX = -iconInput.valueAsNumber;
-  iconOutput.value = iconInput.value;
+iconXInput.addEventListener("input", () => {
+  iconX = -iconXInput.valueAsNumber;
   if (iconX < pOhnisko) {
     drawToF();
   } else {
@@ -341,4 +351,33 @@ iconInput.addEventListener("input", () => {
   }
 });
 
-obraz.src = "arrow.svg";
+iconYInput.addEventListener("input", () => {
+  iconHeight = iconYInput.valueAsNumber;
+  drawIconHeight = height / 2 - iconHeight;
+  if (iconX < pOhnisko) {
+    drawToF();
+  } else {
+    drawBehindF();
+  }
+});
+
+radiusInput.addEventListener("input", () => {
+  rz = radiusInput.valueAsNumber;
+  if (iconX < pOhnisko) {
+    drawToF();
+  } else {
+    drawBehindF();
+  }
+});
+
+centerInput.addEventListener("input", () => {
+  center = centerInput.valueAsNumber;
+  if (iconX < pOhnisko) {
+    drawToF();
+  } else {
+    drawBehindF();
+  }
+});
+
+obraz.src = "one.svg";
+drawToF();

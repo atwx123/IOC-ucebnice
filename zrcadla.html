@@ -10,7 +10,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="#">Stránky</a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
@@ -29,8 +29,30 @@
         <h1>ZRCADLA</h1>
         <hr>
         <div class="interact">
-            <input type="range" class="form-range" min="-597" max="5" id="iconRangeInput">
-            <output for="iconRangeInput" id="iconRangeOutput" aria-hidden="true"></output>
+
+            <label for="iconXRangeInput">Pozice objektu</label>
+            <input type="range" class="form-range" min="-1000" max="1000" id="iconXRangeInput">
+
+            <p>
+
+            </p>
+
+            <label for="iconYRangeInput">Velikost objektu</label>
+            <input type="range" class="form-range" min="1" max="300" id="iconYRangeInput">
+
+            <p>
+
+            </p>
+
+            <label for="radiusRangeInput">Poloměr kružnice</label>
+            <input type="range" class="form-range" min="400" max="800" id="radiusRangeInput">
+
+            <p>
+
+            </p>
+            <label for="centerRangeInput">Pozice středu křivosti</label>
+            <input type="range" class="form-range" min="200" max="800" id="centerRangeInput">
+
             <div class="canvas-container">
                 <canvas id="zrcadlaInt" width="1200px" height="600px"></canvas>
             </div>
