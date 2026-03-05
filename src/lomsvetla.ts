@@ -26,8 +26,8 @@ const height: number = 600;
 function draw(axisx: [number, number], axisy: [number, number] | undefined) {
   let axiy: [number, number] = [-1, -1];
   if (axisy == undefined) {
-    let x1 = axisx[0];
-    let x2 = axisx[1];
+    const x1 = axisx[0];
+    const x2 = axisx[1];
     axiy[0] = canvas.width + (canvas.width - x1);
     axiy[1] = x2;
   } else {
@@ -57,22 +57,15 @@ function radToAng(rad: number) {
   return (rad / (2 * Math.PI)) * 360;
 }
 
-function indexLomu(value: number, alpha: number, beta: number, n2: number) {
-  let n1: number = value;
-  let xn1: number =
-    (canvas.width / 2) * ((Math.sin(alpha) / (Math.sin(beta) * n2)) * 0.01);
-  let yn1: number = height / 2;
-}
-
 function alpha(value: number): [number, number] {
   if (value == 0) {
     return [canvas.width / 2, 0];
   }
-  let nx = (canvas.height / 2) * Math.tan(angToRad(value));
+  const nx = (canvas.height / 2) * Math.tan(angToRad(value));
   if (!(nx > canvas.width / 2)) {
     return [canvas.width / 2 - nx, 0];
   }
-  let ny = (canvas.width / 2) * Math.tan(angToRad(90 - value));
+  const ny = (canvas.width / 2) * Math.tan(angToRad(90 - value));
   return [0, canvas.height / 2 - ny];
 }
 
@@ -100,20 +93,20 @@ function readingRefIndex(select: HTMLSelectElement) {
 }
 
 function beta(): [number, number] | undefined {
-  let sin = Math.sin(angToRad(alphaInput.valueAsNumber));
-  let pomer = readingRefIndex(indexn1) / readingRefIndex(indexn2);
+  const sin = Math.sin(angToRad(alphaInput.valueAsNumber));
+  const pomer = readingRefIndex(indexn1) / readingRefIndex(indexn2);
   if (sin * pomer > 1) {
     return undefined;
   }
-  let rad = Math.asin(sin * pomer);
-  let angle = radToAng(rad);
-  let beta = Math.round(angle * 100) / 100;
+  const rad = Math.asin(sin * pomer);
+  const angle = radToAng(rad);
+  const beta = Math.round(angle * 100) / 100;
   betaOutput.value = "Beta je " + beta + "°";
-  let nx = canvas.width / 2 + (canvas.height / 2) * Math.tan(rad);
+  const nx = canvas.width / 2 + (canvas.height / 2) * Math.tan(rad);
   if (nx <= canvas.width) {
     return [nx, canvas.height];
   }
-  let ny = canvas.height / 2 + (canvas.width / 2) * Math.tan(Math.PI / 2 - rad);
+  const ny = canvas.height / 2 + (canvas.width / 2) * Math.tan(Math.PI / 2 - rad);
   return [canvas.width, ny];
 }
 

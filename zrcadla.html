@@ -2,6 +2,7 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <title>IOC</title>
@@ -28,42 +29,6 @@
 
         <h1>ZRCADLA</h1>
         <hr>
-        <div class="interact">
-
-            <label for="iconXRangeInput">Pozice objektu</label>
-            <input type="range" class="form-range" min="-1000" max="1000" id="iconXRangeInput">
-
-            <p>
-
-            </p>
-
-            <label for="iconYRangeInput">Velikost objektu</label>
-            <input type="range" class="form-range" min="1" max="300" id="iconYRangeInput">
-
-            <p>
-
-            </p>
-
-            <label for="radiusRangeInput">Poloměr kružnice</label>
-            <input type="range" class="form-range" min="400" max="800" id="radiusRangeInput">
-
-            <p>
-
-            </p>
-            <label for="centerRangeInput">Pozice středu křivosti</label>
-            <input type="range" class="form-range" min="200" max="800" id="centerRangeInput">
-
-            <div class="canvas-container">
-                <canvas id="zrcadlaInt" width="1200px" height="600px"></canvas>
-            </div>
-            <p>
-                Na této interkativitě lze pozorovat takzvanou <span class="termi">nedokonalost kulového zrcadla</span>.
-                Ta se projevuje čím <span class="zvyr">menší</span> je poloměr <span class="zvyr">kulového
-                    zrcadla</span> a čím <span class="zvyr">větší</span> je <span class="zvyr">objekt, který se
-                    odráží</span>. Přesně z tohoto důvodu se většinou používají <span class="termi">parabolická
-                    zrcadla</span>.
-            </p>
-        </div>
         <p>
             Podle tvaru rozlišujeme <span class="zvyr">dva druhy</span> zrcadel: <span class="termi">kulová</span>
             neboli <span class="termi">sférická</span> (<span class="termi">dutá</span> - konkávní, <span
@@ -215,6 +180,45 @@
             a <span class="pojem">neskutečný</span>, je–li Z &lt; 0, pak jsou v opačných polorovinách, obraz je <span
                 class="pojem">převrácený</span> a <span class="pojem">skutečný</span>.
         </p>
+
+        <hr>
+
+        <div class="interact">
+
+            <label for="iconXRangeInput">Pozice objektu</label>
+            <input type="range" class="form-range" min="-1000" max="1000" id="iconXRangeInput">
+
+            <p>
+
+            </p>
+
+            <label for="iconYRangeInput">Velikost objektu</label>
+            <input type="range" class="form-range" min="1" max="300" id="iconYRangeInput">
+
+            <p>
+
+            </p>
+
+            <label for="radiusRangeInput">Poloměr kružnice</label>
+            <input type="range" class="form-range" min="400" max="800" id="radiusRangeInput">
+
+            <p>
+
+            </p>
+            <label for="centerRangeInput">Pozice středu křivosti</label>
+            <input type="range" class="form-range" min="200" max="800" id="centerRangeInput">
+
+            <div class="canvas-container">
+                <canvas id="zrcadlaInt" width="1200px" height="600px"></canvas>
+            </div>
+            <p>
+                Na této interkativitě lze pozorovat takzvanou <span class="termi">nedokonalost kulového zrcadla</span>.
+                Ta se projevuje čím <span class="zvyr">menší</span> je poloměr <span class="zvyr">kulového
+                    zrcadla</span> a čím <span class="zvyr">větší</span> je <span class="zvyr">objekt, který se
+                    odráží</span>. Přesně z tohoto důvodu se většinou používají <span class="termi">parabolická
+                    zrcadla</span>.
+            </p>
+        </div>
     </div>
     <script type="module" src="dist/zrcadla.js"></script>
 </body>
