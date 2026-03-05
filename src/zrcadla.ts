@@ -4,18 +4,25 @@ const canvas: HTMLCanvasElement = document.getElementById(
 const ctx: CanvasRenderingContext2D = canvas.getContext(
   "2d",
 ) as CanvasRenderingContext2D;
-const iconXInputConc: HTMLInputElement = document.getElementById(
+const iconXInput: HTMLInputElement = document.getElementById(
   "iconXRangeInput",
 ) as HTMLInputElement;
-const iconYInputConc: HTMLInputElement = document.getElementById(
+const iconYInput: HTMLInputElement = document.getElementById(
   "iconYRangeInput",
 ) as HTMLInputElement;
-const radiusInputConc: HTMLInputElement = document.getElementById(
+const radiusInput: HTMLInputElement = document.getElementById(
   "radiusRangeInput",
 ) as HTMLInputElement;
-const centerInputConc: HTMLInputElement = document.getElementById(
+const centerInput: HTMLInputElement = document.getElementById(
   "centerRangeInput",
 ) as HTMLInputElement;
+const concButton: HTMLButtonElement = document.getElementById(
+  "buttonConc",
+) as HTMLButtonElement;
+const convButton: HTMLButtonElement = document.getElementById(
+  "buttonConv",
+) as HTMLButtonElement;
+let mirror: boolean = true;
 const width: number = 1000;
 const height: number = 600;
 let centerConc = width / 6;
@@ -57,7 +64,9 @@ function getThroughFTFHitConc(): [number, number] {
   const relObjY: number = drawIconHeightConc - height / 2;
 
   if (Math.abs(iconXConc - pOhniskoConc) < 0.01) {
-    const val: number = Math.sqrt(rzConc * rzConc - pOhniskoConc * pOhniskoConc);
+    const val: number = Math.sqrt(
+      rzConc * rzConc - pOhniskoConc * pOhniskoConc,
+    );
     const relHitY: number = relObjY < 0 ? val : -val;
     return [pOhniskoConc, relHitY + height / 2];
   }
@@ -101,12 +110,12 @@ function linesInterConc(): [number, number] {
   return [targetX, blueHitY];
 }
 
-function getHorBFHit(): [number, number] {
+function getHorBFHitConc(): [number, number] {
   const dy: number = drawIconHeightConc - height / 2;
   const x: number = Math.sqrt(rzConc * rzConc - dy * dy);
   return [x, drawIconHeightConc];
 }
-function drawBackground() {
+function drawBackgroundConc() {
   ctx.save();
   ctx.setLineDash([5, 10, 10, 15]);
   ctx.beginPath();
@@ -141,7 +150,7 @@ function drawBackground() {
   ctx.restore();
 }
 
-function drawToF() {
+function drawToFConc() {
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, width, height);
@@ -149,10 +158,11 @@ function drawToF() {
 
   ctx.save();
 
-  drawBackground();
+  drawBackgroundConc();
   ctx.translate(centerConc, 0);
 
-  const newWidth: number = obrazConc.width / (obrazConc.height / iconHeightConc);
+  const newWidth: number =
+    obrazConc.width / (obrazConc.height / iconHeightConc);
   if (obrazConc.complete) {
     const leftSide = iconXConc - newWidth / 2;
     ctx.drawImage(
@@ -173,7 +183,8 @@ function drawToF() {
   const slopeRed: number = (focusY - redHit[1]) / (pOhniskoConc - redHit[0]);
 
   const yAtLeft: number = redHit[1] + slopeRed * (-centerConc - redHit[0]);
-  const yAtRight: number = redHit[1] + slopeRed * (width - centerConc - redHit[0]);
+  const yAtRight: number =
+    redHit[1] + slopeRed * (width - centerConc - redHit[0]);
 
   ctx.beginPath();
   ctx.moveTo(redHit[0], redHit[1]);
@@ -194,10 +205,12 @@ function drawToF() {
 
   const blueMirrorHit: [number, number] = getThroughFTFHitConc();
 
-  const slopeBlue: number = (focusY - drawIconHeightConc) / (pOhniskoConc - iconXConc);
+  const slopeBlue: number =
+    (focusY - drawIconHeightConc) / (pOhniskoConc - iconXConc);
 
   const blueYAtLeft: number = focusY + slopeBlue * (-centerConc - pOhniskoConc);
-  const blueYAtRight: number = focusY + slopeBlue * (width - centerConc - pOhniskoConc);
+  const blueYAtRight: number =
+    focusY + slopeBlue * (width - centerConc - pOhniskoConc);
 
   ctx.setLineDash([]);
   ctx.beginPath();
@@ -256,7 +269,7 @@ function drawToF() {
   );
   ctx.restore();
 }
-function drawBehindF() {
+function drawBehindFConc() {
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, width, height);
@@ -264,10 +277,11 @@ function drawBehindF() {
 
   ctx.save();
 
-  drawBackground();
+  drawBackgroundConc();
   ctx.translate(centerConc, 0);
 
-  const newWidth: number = obrazConc.width / (obrazConc.height / iconHeightConc);
+  const newWidth: number =
+    obrazConc.width / (obrazConc.height / iconHeightConc);
   if (obrazConc.complete) {
     const leftSide = iconXConc - newWidth / 2;
     ctx.drawImage(
@@ -284,7 +298,8 @@ function drawBehindF() {
   const focusY: number = height / 2;
   const redHit: [number, number] = getThroughFBFHitConc();
 
-  const slopeF: number = (focusY - drawIconHeightConc) / (pOhniskoConc - iconXConc);
+  const slopeF: number =
+    (focusY - drawIconHeightConc) / (pOhniskoConc - iconXConc);
   const xAtBottom: number = pOhniskoConc + (height - focusY) / slopeF;
 
   ctx.strokeStyle = "blue";
@@ -306,7 +321,7 @@ function drawBehindF() {
   ctx.restore();
 
   // Red ray
-  const [xkb, ykb]: [number, number] = getHorBFHit();
+  const [xkb, ykb]: [number, number] = getHorBFHitConc();
   horBeamConc(ykb, xkb, "red");
   const mb: number = (focusY - ykb) / (pOhniskoConc - xkb);
   const ybLeft: number = ykb + mb * (-centerConc - xkb);
@@ -332,7 +347,13 @@ function drawBehindF() {
   const vWidth: number = (obrazConc.width / obrazConc.height) * absHeight;
 
   if (obrazConc.complete) {
-    ctx.drawImage(obrazConc, virtualX - vWidth / 2, redHit[1], vWidth, absHeight);
+    ctx.drawImage(
+      obrazConc,
+      virtualX - vWidth / 2,
+      redHit[1],
+      vWidth,
+      absHeight,
+    );
   }
 
   ctx.restore();
@@ -340,44 +361,73 @@ function drawBehindF() {
 canvas.width = width;
 canvas.height = height;
 
-iconXInputConc.max = (centerConc - 10).toString();
+function drawConv() {
+  console.log("EMILY WAS HERE :3");
+  console.log("Adam mochtet Metr Pacinka rauchen");
+}
 
-iconXInputConc.addEventListener("input", () => {
-  iconXConc = -iconXInputConc.valueAsNumber;
-  if (iconXConc < pOhniskoConc) {
-    drawToF();
+iconXInput.addEventListener("input", () => {
+  if (mirror) {
+    iconXConc = -iconXInput.valueAsNumber;
+    if (iconXConc < pOhniskoConc) {
+      drawToFConc();
+    } else {
+      drawBehindFConc();
+    }
   } else {
-    drawBehindF();
+    drawConv();
   }
 });
 
-iconYInputConc.addEventListener("input", () => {
-  iconHeightConc = iconYInputConc.valueAsNumber;
-  drawIconHeightConc = height / 2 - iconHeightConc;
-  if (iconXConc < pOhniskoConc) {
-    drawToF();
+iconYInput.addEventListener("input", () => {
+  if (mirror) {
+    iconHeightConc = iconYInput.valueAsNumber;
+    drawIconHeightConc = height / 2 - iconHeightConc;
+    if (iconXConc < pOhniskoConc) {
+      drawToFConc();
+    } else {
+      drawBehindFConc();
+    }
   } else {
-    drawBehindF();
+    drawConv();
   }
 });
 
-radiusInputConc.addEventListener("input", () => {
-  rzConc = radiusInputConc.valueAsNumber;
-  if (iconXConc < pOhniskoConc) {
-    drawToF();
+radiusInput.addEventListener("input", () => {
+  if (mirror) {
+    rzConc = radiusInput.valueAsNumber;
+    if (iconXConc < pOhniskoConc) {
+      drawToFConc();
+    } else {
+      drawBehindFConc();
+    }
   } else {
-    drawBehindF();
+    drawConv();
   }
 });
 
-centerInputConc.addEventListener("input", () => {
-  centerConc = centerInputConc.valueAsNumber;
-  if (iconXConc < pOhniskoConc) {
-    drawToF();
+centerInput.addEventListener("input", () => {
+  if (mirror) {
+    centerConc = centerInput.valueAsNumber;
+    if (iconXConc < pOhniskoConc) {
+      drawToFConc();
+    } else {
+      drawBehindFConc();
+    }
   } else {
-    drawBehindF();
+    drawConv();
   }
+});
+
+concButton.addEventListener("click", () => {
+  mirror = true;
+  drawToFConc();
+});
+
+convButton.addEventListener("click", () => {
+  mirror = false;
+  drawConv();
 });
 
 obrazConc.src = "one.svg";
-drawToF();
+drawToFConc();
