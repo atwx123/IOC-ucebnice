@@ -31,15 +31,24 @@ const pOhniskoConc: number = rzConc / 2;
 let iconHeightConc: number = 50;
 let drawIconHeightConc = height / 2 - iconHeightConc;
 let iconXConc: number = -200;
-const obrazConc: HTMLImageElement = new Image();
+const obraz: HTMLImageElement = new Image();
+let centerConv: number = width / 3;
+let rzConv: number = 600;
+let pOhniskoConv: number = -rzConv / 2;
+let iconHeightConv: number = 50;
+let drawIconHeightConv: number = height / 2 - iconHeightConv;
+let iconXConv: number = -200;
 
-function horBeamConc(y: number, xk?: number, color?: string) {
+function horBeam(y: number, xk?: number, color?: string) {
   ctx.save();
   if (color != undefined) {
     ctx.strokeStyle = color;
   }
   ctx.beginPath();
-  ctx.moveTo(0 - centerConc, y);
+  
+  const currentCenter = mirror ? centerConc : centerConv;
+  ctx.moveTo(0 - currentCenter, y);
+  
   ctx.setLineDash([]);
   if (xk != undefined) {
     ctx.lineTo(xk, y);
@@ -48,7 +57,8 @@ function horBeamConc(y: number, xk?: number, color?: string) {
     ctx.beginPath();
     ctx.moveTo(xk, y);
   }
-  ctx.lineTo(width, y);
+  
+  ctx.lineTo(width, y); 
   ctx.stroke();
   ctx.setLineDash([]);
   ctx.restore();
@@ -115,6 +125,21 @@ function getHorBFHitConc(): [number, number] {
   const x: number = Math.sqrt(rzConc * rzConc - dy * dy);
   return [x, drawIconHeightConc];
 }
+
+function getThroughFConv(): [number, number] {
+  const relObjY: number = drawIconHeightConv - height / 2;
+  const m: number = (0 - relObjY) / (pOhniskoConv - iconXConv);
+  const a: number = 1 + Math.pow(m, 2);
+  const b: number = -2 * pOhniskoConv * Math.pow(m, 2);
+  const c: number =
+    Math.pow(m, 2) * Math.pow(pOhniskoConv, 2) - Math.pow(rzConv, 1);
+  const delta: number = Math.sqrt(Math.pow(b, 2) - 4 * a * c);
+  const x: number = (-b + delta) / (2 * a);
+  const relHitY: number = m * (x - pOhniskoConv);
+  const absoluteY: number = relHitY + height / 2;
+
+  return [x, absoluteY];
+}
 function drawBackgroundConc() {
   ctx.save();
   ctx.setLineDash([5, 10, 10, 15]);
@@ -161,12 +186,11 @@ function drawToFConc() {
   drawBackgroundConc();
   ctx.translate(centerConc, 0);
 
-  const newWidth: number =
-    obrazConc.width / (obrazConc.height / iconHeightConc);
-  if (obrazConc.complete) {
+  const newWidth: number = obraz.width / (obraz.height / iconHeightConc);
+  if (obraz.complete) {
     const leftSide = iconXConc - newWidth / 2;
     ctx.drawImage(
-      obrazConc,
+      obraz,
       leftSide,
       height / 2 - iconHeightConc,
       newWidth,
@@ -178,7 +202,7 @@ function drawToFConc() {
   ctx.strokeStyle = "red";
   const redHit: [number, number] = getHorTFHitConc();
 
-  horBeamConc(redHit[1], redHit[0], "red");
+  horBeam(redHit[1], redHit[0], "red");
   const focusY: number = height / 2;
   const slopeRed: number = (focusY - redHit[1]) / (pOhniskoConc - redHit[0]);
 
@@ -227,11 +251,11 @@ function drawToFConc() {
   ctx.setLineDash([]);
   ctx.restore();
 
-  horBeamConc(blueMirrorHit[1], blueMirrorHit[0], "blue");
+  horBeam(blueMirrorHit[1], blueMirrorHit[0], "blue");
 
   // Obraz
-  const reflection: HTMLImageElement = obrazConc;
-  reflection.src = obrazConc.src;
+  const reflection: HTMLImageElement = obraz;
+  reflection.src = obraz.src;
   const drawMirroredImage = (
     ctx: CanvasRenderingContext2D,
     img: HTMLImageElement,
@@ -257,7 +281,7 @@ function drawToFConc() {
 
   const reflectIconHeight: number = linesInterY - height / 2;
   const reflectNewWidth: number =
-    (obrazConc.width / obrazConc.height) * Math.abs(reflectIconHeight);
+    (obraz.width / obraz.height) * Math.abs(reflectIconHeight);
   drawMirroredImage(
     ctx,
     reflection,
@@ -280,12 +304,11 @@ function drawBehindFConc() {
   drawBackgroundConc();
   ctx.translate(centerConc, 0);
 
-  const newWidth: number =
-    obrazConc.width / (obrazConc.height / iconHeightConc);
-  if (obrazConc.complete) {
+  const newWidth: number = obraz.width / (obraz.height / iconHeightConc);
+  if (obraz.complete) {
     const leftSide = iconXConc - newWidth / 2;
     ctx.drawImage(
-      obrazConc,
+      obraz,
       leftSide,
       height / 2 - iconHeightConc,
       newWidth,
@@ -309,7 +332,7 @@ function drawBehindFConc() {
   ctx.lineTo(redHit[0], redHit[1]);
   ctx.stroke();
 
-  horBeamConc(redHit[1], redHit[0], "blue");
+  horBeam(redHit[1], redHit[0], "blue");
 
   ctx.save();
   ctx.strokeStyle = "blue";
@@ -322,7 +345,7 @@ function drawBehindFConc() {
 
   // Red ray
   const [xkb, ykb]: [number, number] = getHorBFHitConc();
-  horBeamConc(ykb, xkb, "red");
+  horBeam(ykb, xkb, "red");
   const mb: number = (focusY - ykb) / (pOhniskoConc - xkb);
   const ybLeft: number = ykb + mb * (-centerConc - xkb);
   const ybRight: number = ykb + mb * (width - centerConc - xkb);
@@ -344,16 +367,10 @@ function drawBehindFConc() {
   const virtualX: number = xkb + (redHit[1] - ykb) / mb;
   const vHeight: number = redHit[1] - height / 2;
   const absHeight: number = Math.abs(vHeight);
-  const vWidth: number = (obrazConc.width / obrazConc.height) * absHeight;
+  const vWidth: number = (obraz.width / obraz.height) * absHeight;
 
-  if (obrazConc.complete) {
-    ctx.drawImage(
-      obrazConc,
-      virtualX - vWidth / 2,
-      redHit[1],
-      vWidth,
-      absHeight,
-    );
+  if (obraz.complete) {
+    ctx.drawImage(obraz, virtualX - vWidth / 2, redHit[1], vWidth, absHeight);
   }
 
   ctx.restore();
@@ -361,9 +378,103 @@ function drawBehindFConc() {
 canvas.width = width;
 canvas.height = height;
 
+function drawBackgroundConv() {
+  ctx.save();
+  ctx.setLineDash([5, 10, 10, 15]);
+  ctx.beginPath();
+  ctx.moveTo(0, height / 2);
+  ctx.lineTo(width, height / 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.transform(1, 0, 0, 1, centerConv, 0);
+
+  ctx.beginPath();
+  ctx.arc(0, height / 2, rzConv, Math.PI / 2, (Math.PI * 3) / 2);
+  ctx.stroke();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(0, height / 2 - 5);
+  ctx.lineTo(0, height / 2 + 5);
+  ctx.stroke();
+  ctx.textAlign = "center";
+  ctx.textBaseline = "hanging";
+  ctx.font = "20px sans-serif";
+  ctx.fillText("S", 0, height / 2 + 10);
+
+  ctx.beginPath();
+  ctx.moveTo(pOhniskoConv, height / 2 - 5);
+  ctx.lineTo(pOhniskoConv, height / 2 + 5);
+  ctx.stroke();
+
+  ctx.fillText("F", pOhniskoConv, height / 2 + 10);
+
+  ctx.beginPath();
+  ctx.moveTo(-rzConv, height / 2 - 5);
+  ctx.lineTo(-rzConv, height / 2 + 5);
+  ctx.stroke();
+
+  ctx.fillText("V", -rzConv + 10, height / 2 + 10);
+
+  ctx.restore();
+  ctx.restore();
+}
 function drawConv() {
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, width, height);
+  ctx.restore();
+
   console.log("EMILY WAS HERE :3");
-  console.log("Adam mochtet Metr Pacinka rauchen");
+
+  drawBackgroundConv();
+
+  ctx.save();
+
+  ctx.translate(centerConv, 0);
+
+  const newWidth: number = obraz.width / (obraz.height / iconHeightConv);
+  if (obraz.complete) {
+    const leftSide = iconXConv - newWidth / 2;
+    ctx.drawImage(
+      obraz,
+      leftSide,
+      height / 2 - iconHeightConv,
+      newWidth,
+      iconHeightConv,
+    );
+  }
+
+  // Red ray
+
+  ctx.strokeStyle = "red";
+  const redHit: [number, number] = getThroughFConv();
+
+  horBeam(redHit[1], redHit[0], "red");
+  const focusY: number = height / 2;
+  const slopeRed: number = (focusY - redHit[1]) / (pOhniskoConv - redHit[0]);
+
+  const YAtLeft: number = redHit[1] + slopeRed * (-centerConv - redHit[0]);
+  const YAtRight: number =
+    redHit[1] + slopeRed * (width - centerConv - redHit[0]);
+
+  ctx.beginPath();
+  ctx.moveTo(redHit[0], redHit[1]);
+  ctx.lineTo(-centerConv, YAtLeft);
+  ctx.stroke();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.setLineDash([5, 5]);
+  ctx.moveTo(redHit[0], redHit[1]);
+  ctx.lineTo(width - centerConv, YAtRight);
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.restore();
+
+  //Blue ray
 }
 
 iconXInput.addEventListener("input", () => {
@@ -375,6 +486,7 @@ iconXInput.addEventListener("input", () => {
       drawBehindFConc();
     }
   } else {
+    iconXConv = -iconXInput.valueAsNumber;
     drawConv();
   }
 });
@@ -389,6 +501,8 @@ iconYInput.addEventListener("input", () => {
       drawBehindFConc();
     }
   } else {
+    iconHeightConv = iconYInput.valueAsNumber;
+    drawIconHeightConv = height / 2 - iconHeightConv;
     drawConv();
   }
 });
@@ -402,6 +516,8 @@ radiusInput.addEventListener("input", () => {
       drawBehindFConc();
     }
   } else {
+    rzConv = radiusInput.valueAsNumber;
+    pOhniskoConv = -rzConv / 2;
     drawConv();
   }
 });
@@ -415,6 +531,7 @@ centerInput.addEventListener("input", () => {
       drawBehindFConc();
     }
   } else {
+    centerConv = centerInput.valueAsNumber;
     drawConv();
   }
 });
@@ -429,5 +546,5 @@ convButton.addEventListener("click", () => {
   drawConv();
 });
 
-obrazConc.src = "one.svg";
+obraz.src = "one.svg";
 drawToFConc();
