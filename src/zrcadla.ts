@@ -157,6 +157,17 @@ function getThroughFConv(): [number, number] {
 
   return [x, absoluteY];
 }
+
+function linesInterConv(): [number, number] {
+  const focusY: number = height / 2;
+
+  const mRed: number =
+    (focusY - drawIconHeightConv) / (pOhniskoConv - getHorHitConv()[0]);
+  const intersectX: number =
+    pOhniskoConv + (getThroughFConv()[1] - focusY) / mRed;
+
+  return [intersectX, getThroughFConv()[1]];
+}
 function drawBackgroundConc() {
   ctx.save();
   ctx.setLineDash([5, 10, 10, 15]);
@@ -528,6 +539,22 @@ function drawConv() {
   ctx.setLineDash([]);
 
   ctx.restore();
+
+  // obraz
+
+  const linesInter = linesInterConv();
+  const nIconHeight: number = height / 2 - linesInter[1];
+  const nIconWidth: number = (obraz.width * nIconHeight) / obraz.height;
+
+  if (obraz.complete) {
+    ctx.drawImage(
+      obraz,
+      linesInter[0] - nIconWidth / 2,
+      linesInter[1],
+      nIconWidth,
+      nIconHeight,
+    );
+  }
 
   ctx.restore();
 }
