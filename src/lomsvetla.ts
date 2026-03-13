@@ -119,5 +119,3 @@ canvas.width = width;
 canvas.height = height;
 
 draw([300, 0], [canvas.height, 900]);
-
-console.log(canvas.getContext("2d"));
