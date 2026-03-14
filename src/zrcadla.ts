@@ -38,7 +38,12 @@ let pOhniskoConv: number = -rzConv / 2;
 let iconHeightConv: number = 50;
 let drawIconHeightConv: number = height / 2 - iconHeightConv;
 let iconXConv: number = -200;
-
+/**
+ * Vykresli horizontalni paprsek pro dute zrcadlo na dane souradnici y po delce celeho canvasu
+ * @param y souradnice y paprsku
+ * @param xk x souradnice paprsku se zrcadlem
+ * @param color barva paprsku
+ */
 function horBeamConc(y: number, xk?: number, color?: string) {
   ctx.save();
   if (color != undefined) {
@@ -62,7 +67,12 @@ function horBeamConc(y: number, xk?: number, color?: string) {
   ctx.setLineDash([]);
   ctx.restore();
 }
-
+/**
+ * Vykresli horizontalni paprsek pro vypukle zrcadlo na dane souradnici y po delce celeho canvasu
+ * @param y souradnice y paprsku
+ * @param xk x souradnice paprsku se zrcadlem
+ * @param color barva paprsku
+ */
 function horBeamConv(y: number, xk: number, color?: string) {
   ctx.save();
   if (color != undefined) {
@@ -74,13 +84,22 @@ function horBeamConv(y: number, xk: number, color?: string) {
   ctx.stroke();
   ctx.restore();
 }
-
+/**
+ * Pomoci pythagorovy vety vypocita, kde se horizontalni paprsek u duteho zrcadla protne s kruznici, 
+    zatimco objekt je pred ohniskem
+ * @returns souradnice bodu, kde se horizontalni paprsek protne se zrcadlem (dute zrcadlo)
+ */
 function getHorTFHitConc(): [number, number] {
   const dy: number = drawIconHeightConc - height / 2;
   const x: number = Math.sqrt(Math.pow(rzConc, 2) - Math.pow(dy, 2));
   return [x, drawIconHeightConc];
 }
-
+/**
+ * Pomoci pythagorovy vety (pokud by objekt uz byl velmi blizko objektu) nebo pomoci analyticke geometrie 
+    (pomoci smernice primky a predpisu pro kruznici) vypocita prusecik paprsku, ktery prochazi ohniskem 
+    u duteho zrcadla, s kruznici, zatimco je objekt pred ohniskem
+ * @returns souradnice bodu, kde se paprsek, ktery prochazi ohniskem protne se zrcadlem (dute zrcadlo)
+ */
 function getThroughFTFHitConc(): [number, number] {
   const relObjY: number = drawIconHeightConc - height / 2;
 
@@ -105,7 +124,11 @@ function getThroughFTFHitConc(): [number, number] {
 
   return [x, relHitY + height / 2];
 }
-
+/**
+ * Pomoci analyticke geometrie (smernice primky a predpis kruznice) vypocita souradnice bodu, kde se 
+    paprsek, ktery prochazi ohniskem u duteho zrcadla, protina s zrcadlem, zatimco objekt je za ohniskem
+ * @returns souradnice bodu, kde se paprsek, ktery prochazi ohniskem, protne se zrcadlem
+ */
 function getThroughFBFHitConc(): [number, number] {
   const relObjY: number = drawIconHeightConc - height / 2;
 
@@ -119,7 +142,10 @@ function getThroughFBFHitConc(): [number, number] {
 
   return [x, relHitY + height / 2];
 }
-
+/**
+ * Pomoci analyticke geometrie (smernice primek) vypocita prusecik paprsku u konkavniho zrcadla
+ * @returns souradnice bodu, kde se protnou paprsky u duteho zrcadla
+ */
 function linesInterConc(): [number, number] {
   const [redHitX, redHitY]: [number, number] = getHorTFHitConc();
   const blueHitY: number = getThroughFTFHitConc()[1];
@@ -130,12 +156,20 @@ function linesInterConc(): [number, number] {
 
   return [targetX, blueHitY];
 }
-
+/**
+ * Pomoci pythagorovy vety vypocita prusecik horizontalniho paprsku u duteho zrcadla s zrcadlem,
+ *  zatimco objekt je za ohniskem
+ * @returns prusecik horizontalniho paprsku a duteho zrcadla
+ */
 function getHorBFHitConc(): [number, number] {
   const dy: number = drawIconHeightConc - height / 2;
   const x: number = Math.sqrt(rzConc * rzConc - dy * dy);
   return [x, drawIconHeightConc];
 }
+/**
+ * Pomoci pythagorovy vety vypocita prusecik horizontalniho paprsku u vypukleho zrcadla s zrcadlem
+ * @returns prusecik horizontalniho paprsku a vypukleho zrcadla
+ */
 function getHorHitConv(): [number, number] {
   const dy: number = drawIconHeightConv - height / 2;
   return [
@@ -143,6 +177,11 @@ function getHorHitConv(): [number, number] {
     -drawIconHeightConv,
   ];
 }
+/**
+ * Pomoci analyticke geometrie vypocita prusecik paprsku, ktery prochazi ohniskem u vypukleho zrcadla,
+ * s zrcadlem
+ * @returns prusecik paprsku, ktery prochazi ohniskem a vypukleho zrcadla
+ */
 function getThroughFConv(): [number, number] {
   const relObjY: number = drawIconHeightConv - height / 2;
   const m: number = (0 - relObjY) / (pOhniskoConv - iconXConv);
@@ -157,7 +196,10 @@ function getThroughFConv(): [number, number] {
 
   return [x, absoluteY];
 }
-
+/**
+ * Pomoci analyticke geometrie vypocita prusecik paprsku u vypukleho zrcadla
+ * @returns prusecik paprsku u vypukleho zrcadla
+ */
 function linesInterConv(): [number, number] {
   const focusY: number = height / 2;
 
@@ -168,6 +210,9 @@ function linesInterConv(): [number, number] {
 
   return [intersectX, getThroughFConv()[1]];
 }
+/**
+ * Kresli pozadi k interkaitvite pro konkavni zrcadlo
+ */
 function drawBackgroundConc() {
   ctx.save();
   ctx.setLineDash([5, 10, 10, 15]);
@@ -202,7 +247,9 @@ function drawBackgroundConc() {
   ctx.restore();
   ctx.restore();
 }
-
+/**
+ * Vykresli paprsky, objekt a obraz, kdyz je objekt pred ohniskem
+ */
 function drawToFConc() {
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -321,6 +368,9 @@ function drawToFConc() {
   );
   ctx.restore();
 }
+/**
+ * Vykresli paprsky, objekt a obraz, kdyz je objekt za ohniskem
+ */
 function drawBehindFConc() {
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -405,7 +455,9 @@ function drawBehindFConc() {
 }
 canvas.width = width;
 canvas.height = height;
-
+/**
+ * Vykresluje pozadi k interavite u konvexniho zrcadla
+ */
 function drawBackgroundConv() {
   ctx.save();
   ctx.setLineDash([5, 10, 10, 15]);
@@ -448,6 +500,9 @@ function drawBackgroundConv() {
   ctx.restore();
   ctx.restore();
 }
+/**
+ * Vykresluje paprsky, obraz a objekt u konvexniho zrcadla
+ */
 function drawConv() {
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);

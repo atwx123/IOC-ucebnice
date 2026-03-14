@@ -22,16 +22,21 @@ const betaOutput: HTMLOutputElement = document.getElementById(
 
 const width: number = 1000;
 const height: number = 600;
+/**
+ * Funkce, ktere se predaji parametry a vykresluje dva paprsky, jeden v prostredi n1 - cerveny - druhy v prostredi n2 - modry.
+ * @param axisb souradnice modreho paprsku (paprsku v prostredi n1)
+ * @param axisr souradnice cerveneho paprsku (paprsku v prstredi n2)
+ */
 
-function draw(axisx: [number, number], axisy: [number, number] | undefined) {
+function draw(axisb: [number, number], axisr: [number, number] | undefined) {
   let axiy: [number, number] = [-1, -1];
-  if (axisy == undefined) {
-    const x1 = axisx[0];
-    const x2 = axisx[1];
+  if (axisr == undefined) {
+    const x1 = axisb[0];
+    const x2 = axisb[1];
     axiy[0] = canvas.width + (canvas.width - x1);
     axiy[1] = x2;
   } else {
-    axiy = axisy;
+    axiy = axisr;
   }
   ctx.fillStyle = "lightblue";
   ctx.fillRect(0, 0, width, height / 2);
@@ -39,7 +44,7 @@ function draw(axisx: [number, number], axisy: [number, number] | undefined) {
   ctx.fillRect(0, height / 2, width, height / 2);
   ctx.strokeStyle = "red";
   ctx.beginPath();
-  ctx.moveTo(axisx[0], axisx[1]);
+  ctx.moveTo(axisb[0], axisb[1]);
   ctx.lineTo(width / 2, height / 2);
   ctx.stroke();
   ctx.strokeStyle = "blue";
@@ -48,15 +53,27 @@ function draw(axisx: [number, number], axisy: [number, number] | undefined) {
   ctx.lineTo(axiy[0], axiy[1]);
   ctx.stroke();
 }
-
-function angToRad(ang: number) {
+/**
+ * Prevede uhly na radiany
+ * @param ang uhel, ktery je treba prevest
+ * @returns pocet radianu odpovidajici velikosti uhlu
+ */
+function angToRad(ang: number): number {
   return (ang / 360) * (2 * Math.PI);
 }
-
-function radToAng(rad: number) {
+/**
+ * Prevede radiany na uhly
+ * @param rad radiany, ktere je treba prevest
+ * @returns velikost uhlu
+ */
+function radToAng(rad: number): number {
   return (rad / (2 * Math.PI)) * 360;
 }
-
+/**
+ * pomoci alfy pocita odkud vychazi paprsek v prostredi n1
+ * @param value velikost uhlu alfa
+ * @returns souradnice bodu odkud vychazi paprsek v prostredi n1
+ */
 function alpha(value: number): [number, number] {
   if (value == 0) {
     return [canvas.width / 2, 0];
@@ -68,8 +85,12 @@ function alpha(value: number): [number, number] {
   const ny = (canvas.width / 2) * Math.tan(angToRad(90 - value));
   return [0, canvas.height / 2 - ny];
 }
-
-function readingRefIndex(select: HTMLSelectElement) {
+/**
+ * Urceni indexu lomu daneho prostredi
+ * @param select select element prostredi
+ * @returns hodnotu n pro dane prostredi
+ */
+function readingRefIndex(select: HTMLSelectElement): number {
   switch (select.value) {
     case "1": {
       return 1;
@@ -91,7 +112,10 @@ function readingRefIndex(select: HTMLSelectElement) {
     }
   }
 }
-
+/**
+ * Na zaklade Snellova zakona pocita pod jakym uhlem vchazi paprsek do prostredi n2
+ * @returns Souradnice bodu do jakeho smeruje paprsek v prostredi n2, pokud dochazi k totalni reflexi, vraci undefined
+ */
 function beta(): [number, number] | undefined {
   const sin = Math.sin(angToRad(alphaInput.valueAsNumber));
   const pomer = readingRefIndex(indexn1) / readingRefIndex(indexn2);
@@ -106,7 +130,8 @@ function beta(): [number, number] | undefined {
   if (nx <= canvas.width) {
     return [nx, canvas.height];
   }
-  const ny = canvas.height / 2 + (canvas.width / 2) * Math.tan(Math.PI / 2 - rad);
+  const ny =
+    canvas.height / 2 + (canvas.width / 2) * Math.tan(Math.PI / 2 - rad);
   return [canvas.width, ny];
 }
 
