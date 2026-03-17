@@ -7,7 +7,7 @@ const ctx: CanvasRenderingContext2D = canvas.getContext(
 const iconXInput: HTMLInputElement = document.getElementById(
   "objectXInput",
 ) as HTMLInputElement;
-const width: number = 800;
+const width: number = 1000;
 const height: number = 600;
 const center: number = width / 2;
 const rConv: number = 200;
@@ -97,36 +97,42 @@ function drawXgt2f() {
     );
   }
 
-  //Red ray
+  const blueSlope = iconHeightConv / (center - iconX - f);
+  const yLens = height / 2 + blueSlope * f;
 
   const redSlope = iconHeightConv / f;
-  const redEndY = height / 2 - iconHeightConv + redSlope * (width - center);
 
+  const intersectX =
+    center + (yLens - (height / 2 - iconHeightConv)) / redSlope;
+
+  const drawLimitX = Math.max(width, intersectX);
+  const redEndY =
+    height / 2 - iconHeightConv + redSlope * (drawLimitX - center);
+
+  // --- Draw Red Ray ---
   ctx.save();
   ctx.strokeStyle = "red";
   ctx.beginPath();
   ctx.moveTo(0, height / 2 - iconHeightConv);
   ctx.lineTo(center, height / 2 - iconHeightConv);
-  ctx.lineTo(width, redEndY);
+  ctx.lineTo(drawLimitX, redEndY);
   ctx.stroke();
-
   ctx.restore();
 
-  //blue ray
-
-  const blueSlope = iconHeightConv / (center - iconX - f);
-  const yLens = height / 2 + blueSlope * f;
-
+  // --- Draw Blue Ray ---
   ctx.save();
   ctx.strokeStyle = "blue";
   ctx.beginPath();
   ctx.moveTo(iconX, height / 2 - iconHeightConv);
   ctx.lineTo(center, yLens);
-  ctx.lineTo(width, yLens);
+  ctx.lineTo(drawLimitX, yLens); // Extends all the way to the limit
   ctx.stroke();
   ctx.restore();
 
-  // image
+  // --- Draw Image ---
+  const reflectIconHeight: number = yLens - height / 2;
+  const reflectNewWidth: number =
+    (obraz.width / obraz.height) * Math.abs(reflectIconHeight);
   const drawMirroredImage = (
     ctx: CanvasRenderingContext2D,
     img: HTMLImageElement,
@@ -144,46 +150,143 @@ function drawXgt2f() {
     ctx.drawImage(img, -width / 2, -height / 2, width, height);
     ctx.restore();
   };
-
-  const reflectNewWidth: number =
-    (obraz.width / obraz.height) * Math.abs(yLens - height / 2);
-
-  const intersectX =
-    center + (yLens - (height / 2 - iconHeightConv)) / redSlope;
-
   drawMirroredImage(
     ctx,
     obraz,
     intersectX - reflectNewWidth / 2,
     height / 2,
     reflectNewWidth,
-    yLens - height / 2,
+    reflectIconHeight,
     180,
   );
 }
 
-function drawXgtf() {
+function drawXeqf() {
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, width, height);
+  ctx.restore();
 
+  ctx.save();
+  const newWidth = (iconHeightConv * obraz.width) / obraz.height;
   drawBackgroundConv();
-
   if (obraz.complete && obraz.height > 0) {
-    const newWidth = obraz.width / (obraz.height / iconHeightConv);
-    const leftSide = iconX - newWidth / 2;
-
     ctx.drawImage(
       obraz,
-      leftSide,
+      iconX - newWidth / 2,
       height / 2 - iconHeightConv,
       newWidth,
       iconHeightConv,
     );
   }
+  const topY = height / 2 - iconHeightConv;
+
+  // Red ray
+  const redSlope = iconHeightConv / f;
+  const redEndY = topY + redSlope * (width - center);
+
+  ctx.save();
+  ctx.strokeStyle = "red";
+  ctx.beginPath();
+  ctx.moveTo(0, topY);
+  ctx.lineTo(center, topY);
+  ctx.lineTo(width, redEndY);
+  ctx.stroke();
+  ctx.restore();
+
+  // Blue ray
+  const blueSlope = iconHeightConv / f;
+  const bCenter = height / 2 - blueSlope * center;
+
+  const ybl = bCenter;
+  const ybr = blueSlope * width + bCenter;
+
+  ctx.save();
+  ctx.strokeStyle = "blue";
+  ctx.beginPath();
+  ctx.moveTo(0, ybl);
+  ctx.lineTo(width, ybr);
+  ctx.stroke();
+  ctx.restore();
 }
 
-function drawXeqf() {}
+function drawXltf() {
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, width, height);
+  ctx.restore();
 
-function drawXltf() {}
+  drawBackgroundConv();
+  const newWidth = (iconHeightConv * obraz.width) / obraz.height;
+  if (obraz.complete && obraz.height > 0) {
+    ctx.drawImage(
+      obraz,
+      iconX - newWidth / 2,
+      height / 2 - iconHeightConv,
+      newWidth,
+      iconHeightConv,
+    );
+  }
+
+  const topY = height / 2 - iconHeightConv;
+
+  const redSlope = iconHeightConv / f;
+  const blueSlope = iconHeightConv / (center - iconX);
+
+  const intersectX = center + (topY - height / 2) / (blueSlope - redSlope);
+  const intersectY = height / 2 + blueSlope * (intersectX - center);
+
+  // --- Draw Red Ray ---
+  const redEndY = topY + redSlope * (width - center);
+
+  ctx.save();
+  ctx.strokeStyle = "red";
+  ctx.beginPath();
+  ctx.moveTo(0, topY);
+  ctx.lineTo(center, topY);
+  ctx.lineTo(width, redEndY);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.setLineDash([5, 5]);
+  ctx.moveTo(center, topY);
+  ctx.lineTo(intersectX, intersectY);
+  ctx.stroke();
+  ctx.restore();
+
+  // --- Draw Blue Ray ---
+  const blueEndY = height / 2 + blueSlope * (width - center);
+
+  ctx.save();
+  ctx.strokeStyle = "blue";
+  ctx.beginPath();
+  ctx.moveTo(iconX, topY);
+  ctx.lineTo(width, blueEndY);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.setLineDash([5, 5]);
+  ctx.moveTo(iconX, topY);
+  ctx.lineTo(intersectX, intersectY);
+  ctx.stroke();
+  ctx.restore();
+
+  if (obraz.complete && obraz.height > 0) {
+    const virtualHeight = height / 2 - intersectY;
+    const virtualWidth = (obraz.width / obraz.height) * virtualHeight;
+
+    ctx.save();
+    ctx.globalAlpha = 0.4;
+    ctx.drawImage(
+      obraz,
+      intersectX - virtualWidth / 2,
+      intersectY,
+      virtualWidth,
+      virtualHeight,
+    );
+    ctx.restore();
+  }
+}
 
 canvas.width = width;
 canvas.height = height;
@@ -191,16 +294,12 @@ drawBackgroundConv();
 
 iconXInput.addEventListener("input", () => {
   iconX = iconXInput.valueAsNumber;
-
   const distance = center - iconX;
-
-  if (distance >= 2 * f) {
-    drawXgt2f();
-  } else if (distance < 2 * f && distance > f) {
-    drawXgtf();
-  } else if (Math.abs(distance - f) < 1) {
+  if (Math.abs(distance - f) < 1.5) {
     drawXeqf();
-  } else if (distance < f) {
+  } else if (distance > f) {
+    drawXgt2f();
+  } else {
     drawXltf();
   }
 });
