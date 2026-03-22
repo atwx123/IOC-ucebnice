@@ -13,23 +13,35 @@ const buttonConc: HTMLButtonElement = document.getElementById(
 const buttonConv: HTMLButtonElement = document.getElementById(
   "buttonConv",
 ) as HTMLButtonElement;
+
 const width: number = 1000;
 const height: number = 600;
 const center: number = width / 2;
+
 const rConv: number = 200;
 const n: number = 1.7;
 const f: number = 1 / (((n - 1) * 2) / rConv);
 const vConv: number = 150;
+
 const lensWidthConv: number = 40;
 const lensHeightConv: number = 260;
 const pinchConv: number = 15;
+
 let iconX: number = 200;
+
 const obraz: HTMLImageElement = new Image();
+
 const iconHeight: number = 100;
 const drawIconHeight: number = height / 2 - iconHeight;
+
 let lens: boolean = true;
 
-function drawMarker(text: string, x: number) {
+/**
+ * Nakresli marker pro danou pozici a text
+ * @param text text, ktery se ma vytisknout
+ * @param x kde se ma marker nakreslit
+ */
+function drawMarker(text: string, x: number): void {
   ctx.save();
   ctx.beginPath();
   ctx.moveTo(x, height / 2 - 5);
@@ -42,8 +54,11 @@ function drawMarker(text: string, x: number) {
   ctx.restore();
 }
 
-function drawBackgroundConv() {
-  const angle = Math.acos(vConv / rConv);
+/**
+ * Nakresli pozadi pro spojku
+ */
+function drawBackgroundConv(): void {
+  const angle: number = Math.acos(vConv / rConv);
   ctx.save();
   ctx.fillStyle = "#7FE1EE";
   ctx.beginPath();
@@ -69,20 +84,21 @@ function drawBackgroundConv() {
   ctx.setLineDash([]);
 
   drawMarker("F", center - f);
-
   drawMarker("F'", center + f);
-
   drawMarker("O", center);
 }
 
-function drawXgt2f() {
+/**
+ * Nakresli spojku a paprsky pro objekt vzdaleny vetsi nez 2f
+ */
+function drawXgt2f(): void {
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, width, height);
   ctx.restore();
 
   ctx.save();
-  const newWidth = (iconHeight * obraz.width) / obraz.height;
+  const newWidth: number = (iconHeight * obraz.width) / obraz.height;
   drawBackgroundConv();
   if (obraz.complete && obraz.height > 0) {
     ctx.drawImage(
@@ -94,15 +110,15 @@ function drawXgt2f() {
     );
   }
 
-  const blueSlope = iconHeight / (center - iconX - f);
-  const yLens = height / 2 + blueSlope * f;
+  const blueSlope: number = iconHeight / (center - iconX - f);
+  const yLens: number = height / 2 + blueSlope * f;
 
-  const redSlope = iconHeight / f;
+  const redSlope: number = iconHeight / f;
 
-  const intersectX = center + (yLens - drawIconHeight) / redSlope;
+  const intersectX: number = center + (yLens - drawIconHeight) / redSlope;
 
-  const drawLimitX = Math.max(width, intersectX);
-  const redEndY = drawIconHeight + redSlope * (drawLimitX - center);
+  const drawLimitX: number = Math.max(width, intersectX);
+  const redEndY: number = drawIconHeight + redSlope * (drawLimitX - center);
 
   // --- Draw Red Ray ---
   ctx.save();
@@ -128,23 +144,25 @@ function drawXgt2f() {
   const reflectIconHeight: number = yLens - height / 2;
   const reflectNewWidth: number =
     (obraz.width / obraz.height) * Math.abs(reflectIconHeight);
+
   const drawMirroredImage = (
-    ctx: CanvasRenderingContext2D,
+    ctxArg: CanvasRenderingContext2D,
     img: HTMLImageElement,
     x: number,
     y: number,
-    width: number,
-    height: number,
+    w: number,
+    h: number,
     degrees: number,
   ): void => {
-    ctx.save();
-    ctx.translate(x + width / 2, y + height / 2);
+    ctxArg.save();
+    ctxArg.translate(x + w / 2, y + h / 2);
     const radians: number = (degrees * Math.PI) / 180;
-    ctx.rotate(radians);
-    ctx.scale(-1, 1);
-    ctx.drawImage(img, -width / 2, -height / 2, width, height);
-    ctx.restore();
+    ctxArg.rotate(radians);
+    ctxArg.scale(-1, 1);
+    ctxArg.drawImage(img, -w / 2, -h / 2, w, h);
+    ctxArg.restore();
   };
+
   drawMirroredImage(
     ctx,
     obraz,
@@ -156,14 +174,17 @@ function drawXgt2f() {
   );
 }
 
-function drawXeqf() {
+/**
+ * Nakresli spojku a paprsky pro objekt vzdaleny mensi nez 2f
+ */
+function drawXeqf(): void {
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, width, height);
   ctx.restore();
 
   ctx.save();
-  const newWidth = (iconHeight * obraz.width) / obraz.height;
+  const newWidth: number = (iconHeight * obraz.width) / obraz.height;
   drawBackgroundConv();
   if (obraz.complete && obraz.height > 0) {
     ctx.drawImage(
@@ -174,11 +195,11 @@ function drawXeqf() {
       iconHeight,
     );
   }
-  const topY = drawIconHeight;
+  const topY: number = drawIconHeight;
 
   // Red ray
-  const redSlope = iconHeight / f;
-  const redEndY = topY + redSlope * (width - center);
+  const redSlope: number = iconHeight / f;
+  const redEndY: number = topY + redSlope * (width - center);
 
   ctx.save();
   ctx.strokeStyle = "red";
@@ -190,11 +211,11 @@ function drawXeqf() {
   ctx.restore();
 
   // Blue ray
-  const blueSlope = iconHeight / f;
-  const bCenter = height / 2 - blueSlope * center;
+  const blueSlope: number = iconHeight / f;
+  const bCenter: number = height / 2 - blueSlope * center;
 
-  const ybl = bCenter;
-  const ybr = blueSlope * width + bCenter;
+  const ybl: number = bCenter;
+  const ybr: number = blueSlope * width + bCenter;
 
   ctx.save();
   ctx.strokeStyle = "blue";
@@ -205,14 +226,17 @@ function drawXeqf() {
   ctx.restore();
 }
 
-function drawXltf() {
+/**
+ * Nakresli spojku a paprsky pro objekt vzdaleny mensi nez f
+ */
+function drawXltf(): void {
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, width, height);
   ctx.restore();
 
   drawBackgroundConv();
-  const newWidth = (iconHeight * obraz.width) / obraz.height;
+  const newWidth: number = (iconHeight * obraz.width) / obraz.height;
   if (obraz.complete && obraz.height > 0) {
     ctx.drawImage(
       obraz,
@@ -223,16 +247,17 @@ function drawXltf() {
     );
   }
 
-  const topY = drawIconHeight;
+  const topY: number = drawIconHeight;
 
-  const redSlope = iconHeight / f;
-  const blueSlope = iconHeight / (center - iconX);
+  const redSlope: number = iconHeight / f;
+  const blueSlope: number = iconHeight / (center - iconX);
 
-  const intersectX = center + (topY - height / 2) / (blueSlope - redSlope);
-  const intersectY = height / 2 + blueSlope * (intersectX - center);
+  const intersectX: number =
+    center + (topY - height / 2) / (blueSlope - redSlope);
+  const intersectY: number = height / 2 + blueSlope * (intersectX - center);
 
   // --- Draw Red Ray ---
-  const redEndY = topY + redSlope * (width - center);
+  const redEndY: number = topY + redSlope * (width - center);
 
   ctx.save();
   ctx.strokeStyle = "red";
@@ -250,7 +275,7 @@ function drawXltf() {
   ctx.restore();
 
   // --- Draw Blue Ray ---
-  const blueEndY = height / 2 + blueSlope * (width - center);
+  const blueEndY: number = height / 2 + blueSlope * (width - center);
 
   ctx.save();
   ctx.strokeStyle = "blue";
@@ -267,8 +292,8 @@ function drawXltf() {
   ctx.restore();
 
   if (obraz.complete && obraz.height > 0) {
-    const virtualHeight = height / 2 - intersectY;
-    const virtualWidth = (obraz.width / obraz.height) * virtualHeight;
+    const virtualHeight: number = height / 2 - intersectY;
+    const virtualWidth: number = (obraz.width / obraz.height) * virtualHeight;
 
     ctx.save();
     ctx.globalAlpha = 0.4;
@@ -283,7 +308,10 @@ function drawXltf() {
   }
 }
 
-function drawBackgroundConc() {
+/**
+ * Nakresli pozadi pro rozptylku
+ */
+function drawBackgroundConc(): void {
   ctx.save();
   ctx.fillStyle = "#7FE1EE";
   ctx.beginPath();
@@ -324,14 +352,18 @@ function drawBackgroundConc() {
   drawMarker("F'", center + f);
   drawMarker("O", center);
 }
-function drawConc() {
+
+/**
+ * Nakresli rozptylku a paprsky
+ */
+function drawConc(): void {
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, width, height);
   ctx.restore();
   drawBackgroundConc();
 
-  const newWidth = (iconHeight * obraz.width) / obraz.height;
+  const newWidth: number = (iconHeight * obraz.width) / obraz.height;
   if (obraz.complete && obraz.height > 0) {
     ctx.drawImage(
       obraz,
@@ -350,8 +382,8 @@ function drawConc() {
   ctx.lineTo(center, drawIconHeight);
   ctx.stroke();
 
-  const redSlope = -iconHeight / f;
-  const redB = drawIconHeight - redSlope * center;
+  const redSlope: number = -iconHeight / f;
+  const redB: number = drawIconHeight - redSlope * center;
 
   ctx.beginPath();
   ctx.setLineDash([5, 5]);
@@ -362,34 +394,33 @@ function drawConc() {
   ctx.beginPath();
   ctx.setLineDash([]);
   ctx.moveTo(center, drawIconHeight);
-  const redEndY = redSlope * width + redB;
+  const redEndY: number = redSlope * width + redB;
   ctx.lineTo(width, redEndY);
   ctx.stroke();
   ctx.restore();
 
   // 2. BLUE RAY
-
-  const blueSlope = iconHeight / (center - iconX);
-  const blueB = height / 2 - blueSlope * center;
+  const blueSlope: number = iconHeight / (center - iconX);
+  const blueB: number = height / 2 - blueSlope * center;
 
   ctx.save();
   ctx.strokeStyle = "blue";
   ctx.beginPath();
   ctx.moveTo(iconX, drawIconHeight);
-  const blueEndY = blueSlope * width + blueB;
+  const blueEndY: number = blueSlope * width + blueB;
   ctx.lineTo(width, blueEndY);
   ctx.stroke();
   ctx.restore();
 
-  const intersectX =
+  const intersectX: number =
     center + (drawIconHeight - height / 2) / (blueSlope - redSlope);
-  const intersectY = height / 2 + blueSlope * (intersectX - center);
+  const intersectY: number = height / 2 + blueSlope * (intersectX - center);
 
   // obraz
   if (obraz.complete && obraz.height > 0) {
-    const virtualHeight = height / 2 - intersectY;
-    const aspect = obraz.width / obraz.height;
-    const virtualWidth = virtualHeight * aspect;
+    const virtualHeight: number = height / 2 - intersectY;
+    const aspect: number = obraz.width / obraz.height;
+    const virtualWidth: number = virtualHeight * aspect;
 
     ctx.save();
     ctx.globalAlpha = 0.4;
@@ -403,14 +434,15 @@ function drawConc() {
     ctx.restore();
   }
 }
+
 canvas.width = width;
 canvas.height = height;
 drawBackgroundConv();
 
-iconXInput.addEventListener("input", () => {
+iconXInput.addEventListener("input", (): void => {
   iconX = iconXInput.valueAsNumber;
   if (lens) {
-    const distance = center - iconX;
+    const distance: number = center - iconX;
     if (Math.abs(distance - f) < 1.5) {
       drawXeqf();
     } else if (distance > f) {
@@ -423,14 +455,16 @@ iconXInput.addEventListener("input", () => {
   }
 });
 
-buttonConc.addEventListener("click", () => {
+buttonConc.addEventListener("click", (): void => {
   lens = false;
+  drawConc();
 });
-buttonConv.addEventListener("click", () => {
+buttonConv.addEventListener("click", (): void => {
   lens = true;
+  drawXgt2f();
 });
 
-obraz.onload = () => {
+obraz.onload = (): void => {
   drawXgt2f();
 };
 

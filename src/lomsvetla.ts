@@ -22,37 +22,43 @@ const betaOutput: HTMLOutputElement = document.getElementById(
 
 const width: number = 1000;
 const height: number = 600;
+
 /**
  * Funkce, ktere se predaji parametry a vykresluje dva paprsky, jeden v prostredi n1 - cerveny - druhy v prostredi n2 - modry.
  * @param axisb souradnice modreho paprsku (paprsku v prostredi n1)
  * @param axisr souradnice cerveneho paprsku (paprsku v prstredi n2)
  */
-
-function draw(axisb: [number, number], axisr: [number, number] | undefined) {
+function draw(axisb: [number, number], axisr: [number, number] | undefined): void {
   let axiy: [number, number] = [-1, -1];
-  if (axisr == undefined) {
-    const x1 = axisb[0];
-    const x2 = axisb[1];
-    axiy[0] = canvas.width + (canvas.width - x1);
+
+  if (axisr === undefined) {
+    const x1: number = axisb[0];
+    const x2: number = axisb[1];
+    const nx: number = canvas.width + (canvas.width - x1);
+    axiy[0] = nx;
     axiy[1] = x2;
   } else {
     axiy = axisr;
   }
+
   ctx.fillStyle = "lightblue";
   ctx.fillRect(0, 0, width, height / 2);
   ctx.fillStyle = "lightgreen";
   ctx.fillRect(0, height / 2, width, height / 2);
+
   ctx.strokeStyle = "red";
   ctx.beginPath();
   ctx.moveTo(axisb[0], axisb[1]);
   ctx.lineTo(width / 2, height / 2);
   ctx.stroke();
+
   ctx.strokeStyle = "blue";
   ctx.beginPath();
   ctx.moveTo(width / 2, height / 2);
   ctx.lineTo(axiy[0], axiy[1]);
   ctx.stroke();
 }
+
 /**
  * Prevede uhly na radiany
  * @param ang uhel, ktery je treba prevest
@@ -61,6 +67,7 @@ function draw(axisb: [number, number], axisr: [number, number] | undefined) {
 function angToRad(ang: number): number {
   return (ang / 360) * (2 * Math.PI);
 }
+
 /**
  * Prevede radiany na uhly
  * @param rad radiany, ktere je treba prevest
@@ -69,22 +76,26 @@ function angToRad(ang: number): number {
 function radToAng(rad: number): number {
   return (rad / (2 * Math.PI)) * 360;
 }
+
 /**
  * pomoci alfy pocita odkud vychazi paprsek v prostredi n1
  * @param value velikost uhlu alfa
  * @returns souradnice bodu odkud vychazi paprsek v prostredi n1
  */
 function alpha(value: number): [number, number] {
-  if (value == 0) {
+  if (value === 0) {
     return [canvas.width / 2, 0];
   }
-  const nx = (canvas.height / 2) * Math.tan(angToRad(value));
+
+  const nx: number = (canvas.height / 2) * Math.tan(angToRad(value));
   if (!(nx > canvas.width / 2)) {
     return [canvas.width / 2 - nx, 0];
   }
-  const ny = (canvas.width / 2) * Math.tan(angToRad(90 - value));
+
+  const ny: number = (canvas.width / 2) * Math.tan(angToRad(90 - value));
   return [0, canvas.height / 2 - ny];
 }
+
 /**
  * Urceni indexu lomu daneho prostredi
  * @param select select element prostredi
@@ -112,26 +123,30 @@ function readingRefIndex(select: HTMLSelectElement): number {
     }
   }
 }
+
 /**
  * Na zaklade Snellova zakona pocita pod jakym uhlem vchazi paprsek do prostredi n2
  * @returns Souradnice bodu do jakeho smeruje paprsek v prostredi n2, pokud dochazi k totalni reflexi, vraci undefined
  */
 function beta(): [number, number] | undefined {
-  const sin = Math.sin(angToRad(alphaInput.valueAsNumber));
-  const pomer = readingRefIndex(indexn1) / readingRefIndex(indexn2);
-  if (sin * pomer > 1) {
+  const sinAlpha: number = Math.sin(angToRad(alphaInput.valueAsNumber));
+  const ratio: number = readingRefIndex(indexn1) / readingRefIndex(indexn2);
+
+  if (sinAlpha * ratio > 1) {
     return undefined;
   }
-  const rad = Math.asin(sin * pomer);
-  const angle = radToAng(rad);
-  const beta = Math.round(angle * 100) / 100;
-  betaOutput.value = "Beta je " + beta + "°";
-  const nx = canvas.width / 2 + (canvas.height / 2) * Math.tan(rad);
+
+  const rad: number = Math.asin(sinAlpha * ratio);
+  const angle: number = radToAng(rad);
+  const betaDeg: number = Math.round(angle * 100) / 100;
+  betaOutput.value = "Beta je " + betaDeg + "°";
+
+  const nx: number = canvas.width / 2 + (canvas.height / 2) * Math.tan(rad);
   if (nx <= canvas.width) {
     return [nx, canvas.height];
   }
-  const ny =
-    canvas.height / 2 + (canvas.width / 2) * Math.tan(Math.PI / 2 - rad);
+
+  const ny: number = canvas.height / 2 + (canvas.width / 2) * Math.tan(Math.PI / 2 - rad);
   return [canvas.width, ny];
 }
 

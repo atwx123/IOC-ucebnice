@@ -22,31 +22,36 @@ const concButton: HTMLButtonElement = document.getElementById(
 const convButton: HTMLButtonElement = document.getElementById(
   "buttonConv",
 ) as HTMLButtonElement;
+
 let mirror: boolean = true;
+
 const width: number = 1000;
 const height: number = 600;
-let centerConc = width / 6;
+
+let centerConc: number = width / 6;
 let rzConc: number = 600;
 const pOhniskoConc: number = rzConc / 2;
 let iconHeightConc: number = 50;
-let drawIconHeightConc = height / 2 - iconHeightConc;
+let drawIconHeightConc: number = height / 2 - iconHeightConc;
 let iconXConc: number = -200;
 const obraz: HTMLImageElement = new Image();
+
 let centerConv: number = width / 3;
 let rzConv: number = 600;
 let pOhniskoConv: number = -rzConv / 2;
 let iconHeightConv: number = 50;
 let drawIconHeightConv: number = height / 2 - iconHeightConv;
 let iconXConv: number = -200;
+
 /**
  * Vykresli horizontalni paprsek pro dute zrcadlo na dane souradnici y po delce celeho canvasu
  * @param y souradnice y paprsku
  * @param xk x souradnice paprsku se zrcadlem
  * @param color barva paprsku
  */
-function horBeamConc(y: number, xk?: number, color?: string) {
+function horBeamConc(y: number, xk?: number, color?: string): void {
   ctx.save();
-  if (color != undefined) {
+  if (color !== undefined) {
     ctx.strokeStyle = color;
   }
   ctx.beginPath();
@@ -54,7 +59,7 @@ function horBeamConc(y: number, xk?: number, color?: string) {
   ctx.moveTo(0 - centerConc, y);
 
   ctx.setLineDash([]);
-  if (xk != undefined) {
+  if (xk !== undefined) {
     ctx.lineTo(xk, y);
     ctx.stroke();
     ctx.setLineDash([5, 5]);
@@ -67,15 +72,16 @@ function horBeamConc(y: number, xk?: number, color?: string) {
   ctx.setLineDash([]);
   ctx.restore();
 }
+
 /**
  * Vykresli horizontalni paprsek pro vypukle zrcadlo na dane souradnici y po delce celeho canvasu
  * @param y souradnice y paprsku
  * @param xk x souradnice paprsku se zrcadlem
  * @param color barva paprsku
  */
-function horBeamConv(y: number, xk: number, color?: string) {
+function horBeamConv(y: number, xk: number, color?: string): void {
   ctx.save();
-  if (color != undefined) {
+  if (color !== undefined) {
     ctx.strokeStyle = color;
   }
   ctx.beginPath();
@@ -84,6 +90,7 @@ function horBeamConv(y: number, xk: number, color?: string) {
   ctx.stroke();
   ctx.restore();
 }
+
 /**
  * Pomoci pythagorovy vety vypocita, kde se horizontalni paprsek u duteho zrcadla protne s kruznici, 
     zatimco objekt je pred ohniskem
@@ -94,6 +101,7 @@ function getHorTFHitConc(): [number, number] {
   const x: number = Math.sqrt(Math.pow(rzConc, 2) - Math.pow(dy, 2));
   return [x, drawIconHeightConc];
 }
+
 /**
  * Pomoci pythagorovy vety (pokud by objekt uz byl velmi blizko objektu) nebo pomoci analyticke geometrie 
     (pomoci smernice primky a predpisu pro kruznici) vypocita prusecik paprsku, ktery prochazi ohniskem 
@@ -104,9 +112,7 @@ function getThroughFTFHitConc(): [number, number] {
   const relObjY: number = drawIconHeightConc - height / 2;
 
   if (Math.abs(iconXConc - pOhniskoConc) < 0.01) {
-    const val: number = Math.sqrt(
-      rzConc * rzConc - pOhniskoConc * pOhniskoConc,
-    );
+    const val: number = Math.sqrt(rzConc * rzConc - pOhniskoConc * pOhniskoConc);
     const relHitY: number = relObjY < 0 ? val : -val;
     return [pOhniskoConc, relHitY + height / 2];
   }
@@ -124,6 +130,7 @@ function getThroughFTFHitConc(): [number, number] {
 
   return [x, relHitY + height / 2];
 }
+
 /**
  * Pomoci analyticke geometrie (smernice primky a predpis kruznice) vypocita souradnice bodu, kde se 
     paprsek, ktery prochazi ohniskem u duteho zrcadla, protina s zrcadlem, zatimco objekt je za ohniskem
@@ -142,6 +149,7 @@ function getThroughFBFHitConc(): [number, number] {
 
   return [x, relHitY + height / 2];
 }
+
 /**
  * Pomoci analyticke geometrie (smernice primek) vypocita prusecik paprsku u konkavniho zrcadla
  * @returns souradnice bodu, kde se protnou paprsky u duteho zrcadla
@@ -156,6 +164,7 @@ function linesInterConc(): [number, number] {
 
   return [targetX, blueHitY];
 }
+
 /**
  * Pomoci pythagorovy vety vypocita prusecik horizontalniho paprsku u duteho zrcadla s zrcadlem,
  *  zatimco objekt je za ohniskem
@@ -166,6 +175,7 @@ function getHorBFHitConc(): [number, number] {
   const x: number = Math.sqrt(rzConc * rzConc - dy * dy);
   return [x, drawIconHeightConc];
 }
+
 /**
  * Pomoci pythagorovy vety vypocita prusecik horizontalniho paprsku u vypukleho zrcadla s zrcadlem
  * @returns prusecik horizontalniho paprsku a vypukleho zrcadla
@@ -177,6 +187,7 @@ function getHorHitConv(): [number, number] {
     -drawIconHeightConv,
   ];
 }
+
 /**
  * Pomoci analyticke geometrie vypocita prusecik paprsku, ktery prochazi ohniskem u vypukleho zrcadla,
  * s zrcadlem
@@ -196,6 +207,7 @@ function getThroughFConv(): [number, number] {
 
   return [x, absoluteY];
 }
+
 /**
  * Pomoci analyticke geometrie vypocita prusecik paprsku u vypukleho zrcadla
  * @returns prusecik paprsku u vypukleho zrcadla
@@ -210,10 +222,11 @@ function linesInterConv(): [number, number] {
 
   return [intersectX, getThroughFConv()[1]];
 }
+
 /**
- * Kresli pozadi k interkaitvite pro konkavni zrcadlo
+ * Kresli pozadi k interkaitvive pro konkavni zrcadlo
  */
-function drawBackgroundConc() {
+function drawBackgroundConc(): void {
   ctx.save();
   ctx.setLineDash([5, 10, 10, 15]);
   ctx.beginPath();
@@ -247,10 +260,11 @@ function drawBackgroundConc() {
   ctx.restore();
   ctx.restore();
 }
+
 /**
  * Vykresli paprsky, objekt a obraz, kdyz je objekt pred ohniskem
  */
-function drawToFConc() {
+function drawToFConc(): void {
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, width, height);
@@ -263,7 +277,7 @@ function drawToFConc() {
 
   const newWidth: number = obraz.width / (obraz.height / iconHeightConc);
   if (obraz.complete) {
-    const leftSide = iconXConc - newWidth / 2;
+    const leftSide: number = iconXConc - newWidth / 2;
     ctx.drawImage(
       obraz,
       leftSide,
@@ -332,25 +346,25 @@ function drawToFConc() {
   const reflection: HTMLImageElement = obraz;
   reflection.src = obraz.src;
   const drawMirroredImage = (
-    ctx: CanvasRenderingContext2D,
+    ctxParam: CanvasRenderingContext2D,
     img: HTMLImageElement,
     x: number,
     y: number,
-    width: number,
-    height: number,
+    w: number,
+    h: number,
     degrees: number,
   ): void => {
-    ctx.save();
+    ctxParam.save();
 
-    ctx.translate(x + width / 2, y + height / 2);
+    ctxParam.translate(x + w / 2, y + h / 2);
 
     const radians: number = (degrees * Math.PI) / 180;
-    ctx.rotate(radians);
-    ctx.scale(-1, 1);
+    ctxParam.rotate(radians);
+    ctxParam.scale(-1, 1);
 
-    ctx.drawImage(img, -width / 2, -height / 2, width, height);
+    ctxParam.drawImage(img, -w / 2, -h / 2, w, h);
 
-    ctx.restore();
+    ctxParam.restore();
   };
   const [linesInterX, linesInterY]: [number, number] = linesInterConc();
 
@@ -368,10 +382,11 @@ function drawToFConc() {
   );
   ctx.restore();
 }
+
 /**
  * Vykresli paprsky, objekt a obraz, kdyz je objekt za ohniskem
  */
-function drawBehindFConc() {
+function drawBehindFConc(): void {
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, width, height);
@@ -384,7 +399,7 @@ function drawBehindFConc() {
 
   const newWidth: number = obraz.width / (obraz.height / iconHeightConc);
   if (obraz.complete) {
-    const leftSide = iconXConc - newWidth / 2;
+    const leftSide: number = iconXConc - newWidth / 2;
     ctx.drawImage(
       obraz,
       leftSide,
@@ -453,12 +468,14 @@ function drawBehindFConc() {
 
   ctx.restore();
 }
+
 canvas.width = width;
 canvas.height = height;
+
 /**
  * Vykresluje pozadi k interavite u konvexniho zrcadla
  */
-function drawBackgroundConv() {
+function drawBackgroundConv(): void {
   ctx.save();
   ctx.setLineDash([5, 10, 10, 15]);
   ctx.beginPath();
@@ -500,10 +517,11 @@ function drawBackgroundConv() {
   ctx.restore();
   ctx.restore();
 }
+
 /**
  * Vykresluje paprsky, obraz a objekt u konvexniho zrcadla
  */
-function drawConv() {
+function drawConv(): void {
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, width, height);
@@ -519,7 +537,7 @@ function drawConv() {
 
   const newWidth: number = obraz.width / (obraz.height / iconHeightConv);
   if (obraz.complete) {
-    const leftSide = iconXConv - newWidth / 2;
+    const leftSide: number = iconXConv - newWidth / 2;
     ctx.drawImage(
       obraz,
       leftSide,
@@ -597,7 +615,7 @@ function drawConv() {
 
   // obraz
 
-  const linesInter = linesInterConv();
+  const linesInter: [number, number] = linesInterConv();
   const nIconHeight: number = height / 2 - linesInter[1];
   const nIconWidth: number = (obraz.width * nIconHeight) / obraz.height;
 
@@ -614,7 +632,7 @@ function drawConv() {
   ctx.restore();
 }
 
-iconXInput.addEventListener("input", () => {
+iconXInput.addEventListener("input", (): void => {
   if (mirror) {
     iconXConc = -iconXInput.valueAsNumber;
     if (iconXConc < pOhniskoConc) {
@@ -628,7 +646,7 @@ iconXInput.addEventListener("input", () => {
   }
 });
 
-iconYInput.addEventListener("input", () => {
+iconYInput.addEventListener("input", (): void => {
   if (mirror) {
     iconHeightConc = iconYInput.valueAsNumber;
     drawIconHeightConc = height / 2 - iconHeightConc;
@@ -644,7 +662,7 @@ iconYInput.addEventListener("input", () => {
   }
 });
 
-radiusInput.addEventListener("input", () => {
+radiusInput.addEventListener("input", (): void => {
   if (mirror) {
     rzConc = radiusInput.valueAsNumber;
     if (iconXConc < pOhniskoConc) {
@@ -659,7 +677,7 @@ radiusInput.addEventListener("input", () => {
   }
 });
 
-centerInput.addEventListener("input", () => {
+centerInput.addEventListener("input", (): void => {
   if (mirror) {
     centerConc = centerInput.valueAsNumber;
     if (iconXConc < pOhniskoConc) {
@@ -673,12 +691,12 @@ centerInput.addEventListener("input", () => {
   }
 });
 
-concButton.addEventListener("click", () => {
+concButton.addEventListener("click", (): void => {
   mirror = true;
   drawToFConc();
 });
 
-convButton.addEventListener("click", () => {
+convButton.addEventListener("click", (): void => {
   mirror = false;
   drawConv();
 });
