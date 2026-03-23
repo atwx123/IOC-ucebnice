@@ -8,12 +8,13 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "file://${workspaceFolder}/cocky.html",
+            "url": "file://${workspaceFolder}/dist/cocky.html",
             "webRoot": "${workspaceFolder}",
             "runtimeArgs": [
                 "--disable-web-security"
             ],
-            "preLaunchTask": "tsc: watch - tsconfig.json"
+            // "preLaunchTask": "tsc: watch - tsconfig.json"
+            "preLaunchTask": "build-dist"
         }
     ]
 }
