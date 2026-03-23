@@ -15,6 +15,16 @@
             "label": "tsc: watch - tsconfig.json"
         },
         {
+            "label": "copy-resources",
+            "type": "shell",
+            "command": "cp -R resources/* dist"
+        },
+        {
+            "label": "build-dist",
+            "dependsOrder": "sequence",
+            "dependsOn": ["tsc: watch - tsconfig.json", "copy-resources"]
+        },
+        {
             "type": "typescript",
             "tsconfig": "tsconfig.json",
             "problemMatcher": [
