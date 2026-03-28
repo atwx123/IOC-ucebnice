@@ -186,48 +186,53 @@
 
         <hr>
 
+        <p> Tato interkativita zobrazuje jak funguje konvexní a konkávní zrcadlo za různých podmínek – pozice vzoru mění
+            vzdálenost vzoru od středu křivosti (když posunete pozicí středu křivosti, tak se posune i vzor), velikost
+            vzoru mění jeho výšku, poloměr zrcadla mění poloměr kružnice, ze které je utvořeno zrcadlo a pozice středu
+            křivosti určuje, kde se nachází zmiňovaný střed křivosti, tudíž to vypadá, že pohne celou simulací</p>
+
         <div class="interact">
 
-            <button type="button" id="buttonConc" class="btn btn-success">Duté zrcadlo</button>
-            <button type="button" id="buttonConv" class="btn btn-success">Vypuklé zrcadlo</button>
+            <div class="controls-wrapper">
+                <div class="d-flex justify-content-between mb-3 gap-2">
+                    <button type="button" id="buttonConc" class="btn btn-success">Duté zrcadlo</button>
+                    <button type="button" id="buttonConv" class="btn btn-success">Vypuklé zrcadlo</button>
+                </div>
 
-            <p>
+                <div class="row controls-row">
+                    <div class="col-6 mb-3">
+                        <label for="iconXRangeInput" class="form-label">Pozice vzoru</label>
+                        <input type="range" class="form-range" min="-1000" max="1000" id="iconXRangeInput">
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="iconYRangeInput" class="form-label">Velikost vzoru</label>
+                        <input type="range" class="form-range" min="1" max="300" id="iconYRangeInput">
+                    </div>
+                </div>
 
-            </p>
-            <label for="iconXRangeInput">Pozice objektu</label>
-            <input type="range" class="form-range" min="-1000" max="1000" id="iconXRangeInput">
-
-            <p>
-
-            </p>
-
-            <label for="iconYRangeInput">Velikost objektu</label>
-            <input type="range" class="form-range" min="1" max="300" id="iconYRangeInput">
-
-            <p>
-
-            </p>
-
-            <label for="radiusRangeInput">Poloměr kružnice</label>
-            <input type="range" class="form-range" min="400" max="800" id="radiusRangeInput">
-
-            <p>
-
-            </p>
-            <label for="centerRangeInput">Pozice středu křivosti</label>
-            <input type="range" class="form-range" min="200" max="1000" id="centerRangeInput">
-
-            <div class="canvas-container">
-                <canvas id="zrcadlaInt" width="1200px" height="600px"></canvas>
+                <div class="row controls-row">
+                    <div class="col-6 mb-3">
+                        <label for="radiusRangeInput" class="form-label">Poloměr zrcadla</label>
+                        <input type="range" class="form-range" min="400" max="800" id="radiusRangeInput">
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="centerRangeInput" class="form-label">Pozice středu křivosti</label>
+                        <input type="range" class="form-range" min="200" max="1000" id="centerRangeInput">
+                    </div>
+                </div>
             </div>
-            <p>
-                Na této interkativitě lze pozorovat takzvanou <span class="termi">nedokonalost kulového zrcadla</span>.
-                Ta se projevuje čím <span class="zvyr">menší</span> je poloměr <span class="zvyr">kulového
-                    zrcadla</span> a čím <span class="zvyr">větší</span> je <span class="zvyr">objekt, který se
-                    odráží</span>. Přesně z tohoto důvodu se většinou používají <span class="termi">parabolická
-                    zrcadla</span>.
-            </p>
+
+            <div class="canvas-wrapper">
+                <canvas id="zrcadlaInt" width="1200" height="600"></canvas>
+            </div>
         </div>
+        <p>
+            Na této interkativitě lze pozorovat takzvanou <span class="termi">nedokonalost kulového zrcadla</span>.
+            Ta se projevuje čím <span class="zvyr">menší</span> je poloměr <span class="zvyr">kulového
+                zrcadla</span> a čím <span class="zvyr">větší</span> je <span class="zvyr">objekt, který se
+                odráží</span>. Přesně z tohoto důvodu se většinou používají <span class="termi">parabolická
+                zrcadla</span>.
+        </p>
     </div>
     <script type="module" src="zrcadla.js"></script>
 </body>

@@ -36,13 +36,14 @@ h1 {
   margin-top: 200px;
   text-align: center;
 }
-p, ul{
+p,
+ul {
   padding: 2px 0;
   margin: 0 5%;
   padding-left: 40px;
 }
 ul {
-  margin: 7%
+  margin: 7%;
 }
 
 .atmosfericka_refrakce {
@@ -97,11 +98,45 @@ canvas {
 .vSireniSvetla {
   margin-left: 130px;
 }
-.n1, .n2 {
+.n1,
+.n2 {
   margin: auto;
   max-width: 85%;
 }
-.n1-text, .n2-text {
+.n1-text,
+.n2-text {
   margin: auto;
   text-align: left;
+}
+.controls-wrapper,
+.canvas-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.controls-row {
+  margin-bottom: 0.75rem;
+}
+#zrcadlaInt {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.controls-wrapper,
+.canvas-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.controls-row {
+  margin-bottom: 0.75rem;
+}
+#lomSvetlaInt {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+#alphaRangeValue,
+#betaValue {
+  min-width: 2.2rem;
+  display: inline-block;
+  text-align: center;
 }

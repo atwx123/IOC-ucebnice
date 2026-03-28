@@ -155,6 +155,14 @@ alphaInput.addEventListener("input", () => {
   draw(alpha(alphaInput.valueAsNumber), beta());
 });
 
+indexn1.addEventListener("change", () => {
+  draw(alpha(alphaInput.valueAsNumber), beta());
+});
+
+indexn2.addEventListener("change", () => {
+  draw(alpha(alphaInput.valueAsNumber), beta());
+});
+
 canvas.width = width;
 canvas.height = height;
 

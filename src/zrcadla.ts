@@ -112,7 +112,9 @@ function getThroughFTFHitConc(): [number, number] {
   const relObjY: number = drawIconHeightConc - height / 2;
 
   if (Math.abs(iconXConc - pOhniskoConc) < 0.01) {
-    const val: number = Math.sqrt(rzConc * rzConc - pOhniskoConc * pOhniskoConc);
+    const val: number = Math.sqrt(
+      rzConc * rzConc - pOhniskoConc * pOhniskoConc,
+    );
     const relHitY: number = relObjY < 0 ? val : -val;
     return [pOhniskoConc, relHitY + height / 2];
   }
@@ -620,6 +622,8 @@ function drawConv(): void {
   const nIconWidth: number = (obraz.width * nIconHeight) / obraz.height;
 
   if (obraz.complete) {
+    ctx.save();
+    ctx.globalAlpha = 0.4;
     ctx.drawImage(
       obraz,
       linesInter[0] - nIconWidth / 2,
@@ -627,6 +631,7 @@ function drawConv(): void {
       nIconWidth,
       nIconHeight,
     );
+    ctx.restore();
   }
 
   ctx.restore();
@@ -698,6 +703,7 @@ concButton.addEventListener("click", (): void => {
 
 convButton.addEventListener("click", (): void => {
   mirror = false;
+  centerConv = 1000;
   drawConv();
 });
 
