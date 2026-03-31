@@ -356,52 +356,48 @@
             <button type="button" id="buttonConc" class="btn btn-success">Rozptylka</button>
             <button type="button" id="buttonConv" class="btn btn-success">Spojka</button>
             <p>
-                
+
             </p>
             <div class="d-flex flex-column align-items-stretch"></div>
-                <div class="mb-2 d-flex align-items-center w-100"></div>
-                    <label for="objectXInput" class="form-label me-3 mb-0" id="objectXRange">Poloha objektu</label>
-                    <input type="range" class="form-range flex-grow-1" min="0" max="500" value="1" id="objectXInput">
-                </div>
-
-                <div class="canvas-container w-100">
-                    <canvas id="cockyInt" style="width:100%; height:auto; display:block;"></canvas>
-                </div>
-            </div>
-
-            <script>
-            (function(){
-                const canvas = document.getElementById('cockyInt');
-                const container = canvas.parentElement;
-
-                function resizeCanvas(){
-                    const ratio = window.devicePixelRatio || 1;
-                    const w = Math.max(300, container.clientWidth); // minimum width to avoid too small
-                    const h = Math.round(w * 0.6); // adjust aspect ratio as needed
-
-                    // CSS size (appearance)
-                    canvas.style.width = w + 'px';
-                    canvas.style.height = h + 'px';
-
-                    // backing store size (actual drawing resolution)
-                    canvas.width = Math.round(w * ratio);
-                    canvas.height = Math.round(h * ratio);
-
-                    const ctx = canvas.getContext('2d');
-                    if (ctx) ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-
-                    // If your existing cocky.js exposes a redraw or render function, call it here:
-                    if (typeof window.redrawCocky === 'function') window.redrawCocky();
-                }
-
-                window.addEventListener('resize', resizeCanvas, { passive: true });
-                // initial sizing
-                resizeCanvas();
-            })();
-            </script></div>
+            <div class="mb-2 d-flex align-items-center w-100"></div>
+            <label for="objectXInput" class="form-label me-3 mb-0" id="objectXRange">Poloha objektu</label>
+            <input type="range" class="form-range flex-grow-1" min="0" max="500" value="1" id="objectXInput">
         </div>
-        <p>
-        </p>
+
+        <div class="canvas-container w-100">
+            <canvas id="cockyInt" style="width:100%; height:auto; display:block;"></canvas>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const canvas = document.getElementById('cockyInt');
+            const container = canvas.parentElement;
+
+            function resizeCanvas() {
+                const ratio = window.devicePixelRatio || 1;
+                const w = Math.max(300, container.clientWidth);
+                const h = Math.round(w * 0.6);
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
+
+                canvas.width = Math.round(w * ratio);
+                canvas.height = Math.round(h * ratio);
+
+                const ctx = canvas.getContext('2d');
+                if (ctx) ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+                if (typeof window.redrawCocky === 'function') window.redrawCocky();
+            }
+
+            window.addEventListener('resize', resizeCanvas, { passive: true });
+            resizeCanvas();
+        })();
+    </script>
+    </div>
+    </div>
+    <p>
+    </p>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
